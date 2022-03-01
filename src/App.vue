@@ -1,108 +1,40 @@
 <template>
   <div id="map">
-    
     <l-map :zoom="zoom" :center="center">
       <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-      <div v-for="item in dataLibrary" v-bind:key="item._id">
-        <l-marker
-          :lat-lng="[
-            item.data.general.address.mapPosition.coordinates[1],
-            item.data.general.address.mapPosition.coordinates[0],
-          ]"
-          :icon="iconLibrary"
-          @click="getData(item)"
-        ></l-marker>
-      </div>
-      <div v-for="item in dataCinema" v-bind:key="item._id">
-        <l-marker
-          :lat-lng="[
-            item.data.general.address.mapPosition.coordinates[1],
-            item.data.general.address.mapPosition.coordinates[0],
-          ]"
-          :icon="iconCinema"
-          @click="getData(item)"
-        ></l-marker>
-      <div v-for="item in dataCircuses" v-bind:key="item._id">
-        <l-marker
-          :lat-lng="[
-            item.data.general.address.mapPosition.coordinates[1],
-            item.data.general.address.mapPosition.coordinates[0],
-          ]"
-          :icon="iconCircuses"
-          @click="getData(item)"
-        ></l-marker>
-      </div>
-      <div v-for="item in dataConcert" v-bind:key="item._id">
-        <l-marker
-          :lat-lng="[
-            item.data.general.address.mapPosition.coordinates[1],
-            item.data.general.address.mapPosition.coordinates[0],
-          ]"
-          :icon="iconConcert"
-          @click="getData(item)"
-        ></l-marker>
-      </div>
-      <div v-for="item in dataMuseums" v-bind:key="item._id">
-        <l-marker
-          :lat-lng="[
-            item.data.general.address.mapPosition.coordinates[1],
-            item.data.general.address.mapPosition.coordinates[0],
-          ]"
-          :icon="iconMuseums"
-          @click="getData(item)"
-        ></l-marker>
-      </div>
-
-      <div v-for="item in dataParks" v-bind:key="item._id">
-        <l-marker
-          :lat-lng="[
-            item.data.general.address.mapPosition.coordinates[1],
-            item.data.general.address.mapPosition.coordinates[0],
-          ]"
-          :icon="iconParks"
-          @click="getData(item)"
-        ></l-marker>
-      </div>
-
-      <div v-for="item in dataTheaters" v-bind:key="item._id">
-        <l-marker
-          :lat-lng="[
-            item.data.general.address.mapPosition.coordinates[1],
-            item.data.general.address.mapPosition.coordinates[0],
-          ]"
-          :icon="iconTheaters"
-          @click="getData(item)"
-        ></l-marker>
-      </div>
-
-      </div>
-      
+      <get-markers :data="dataLibrary" :icon="iconLibrary" @getInfo="getData" />
+      <get-markers :data="dataCinema" :icon="iconCinema" @getInfo="getData" />
+      <get-markers :data="dataCircuses" :icon="iconCircuses" @getInfo="getData" />
+      <get-markers :data="dataConcert" :icon="iconConcert" @getInfo="getData" />
+      <get-markers :data="dataMuseums" :icon="iconMuseums" @getInfo="getData" />
+      <get-markers :data="dataParks" :icon="iconParks" @getInfo="getData" />
+      <get-markers :data="dataTheaters" :icon="iconTheaters" @getInfo="getData" />
     </l-map>
-    <aside class="object" v-bind:class="{'object_closed': !flag}">
+    <aside class="object" v-bind:class="{ object_closed: !flag }">
       <button class="object__close" @click="closeAside"></button>
       <button @click="locationButtonPressed">Нажми на меня</button>
       <div class="object__title"></div>
-        <h2>{{name}}</h2>
-        <div v-html="description"></div>
+      <h2>{{ name }}</h2>
+      <div v-html="description"></div>
       <div class="object__img">
         <img :src="img" alt="" class="img-absolute" />
       </div>
       <div class="object__descr"></div>
     </aside>
   </div>
-  
 </template>
 
 <script>
 //import MyDialog from "MyDialog.vue"
 import axios from "axios";
-import "leaflet/dist/leaflet.css";
-import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
 import { icon } from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
+import GetMarkers from "./components/GetMarkers.vue";
 
 export default {
   name: "App",
-  components: { LMap, LTileLayer, LMarker },
+  components: { LMap, LTileLayer, GetMarkers },
   data() {
     return {
       dataLibrary: [],
@@ -112,7 +44,6 @@ export default {
       dataMuseums: [],
       dataParks: [],
       dataTheaters: [],
-      name: "hi",
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -120,40 +51,43 @@ export default {
       center: [55.5807, 37.3656],
       markerLatLng: [51.504, -0.159],
       flag: false,
-      description: '',
-      img: '',
+
+      name: "",
+      description: "",
+      img: "",
+
       iconLibrary: icon({
-        iconUrl: "https://cdn-icons.flaticon.com/png/512/5832/premium/5832416.png?token=exp=1646073975~hmac=ebd76ab23e896dd0771060c48464e732",
+        iconUrl: "https://psv4.userapi.com/c237331/u191787332/docs/d59/9da5b3c854f7/book.png?extra=kRxn3C3mQmXtfL2vRNVeIXYJ-rLfcmii4Pp_Oov92f7X7WIAmT1mr05Vq22eCY26dr30pVsC6E0ESIV7pcDIaQhNejRJP4GOS03wkC0d5EN4T3wxcB9nMMhzkcHv3cAfOhmHYTxu7YJrlHSj5eL067D8yA",
         iconSize: [32, 37],
         iconAnchor: [16, 37]
       }),
       iconCinema: icon({
-        iconUrl: "https://cdn-icons.flaticon.com/png/512/1655/premium/1655698.png?token=exp=1646074947~hmac=aa5b98535f34b6ceab365335204f87be",
+        iconUrl: "https://psv4.userapi.com/c537232/u191787332/docs/d31/ebbf7072ef2f/6382213.png?extra=QoijFkaxR_YASWVcudcywJ1gsvRQBIEd1jvSUepti0U1TCFlZESdzH0K9UdJdgAterk8lZQYgjZzhwe13gSqr8iCL7rlEdj-mp6CI00WWiwVm9LxyoKNAJeCKqvJ4KUMUkNqvR7nLvqjfuGETTvDZovrDA",
         iconSize: [32, 37],
         iconAnchor: [16, 37]
       }),
       iconCircuses: icon({
-        iconUrl: "https://cdn-icons.flaticon.com/png/512/895/premium/895305.png?token=exp=1646074979~hmac=58c19273bba088f7e69cb9962d10d829",
+        iconUrl: "https://psv4.userapi.com/c537232/u191787332/docs/d22/816759678554/895305.png?extra=4BQ0okQPhiba-KFTFeTs3paoV350bCRlEirYCJVhD3WQvmlHbDrBgyqtNe_qJqoHb5oVVgYbPqwSG2qVKLz3ywkdTu0m1y25liE0KGmuijsrn8OLZk4KvHlQ7ds-QP98fAAT68UbfIraBJG8L8qwkhWJuQ",
         iconSize: [32, 37],
         iconAnchor: [16, 37]
       }),
       iconConcert: icon({
-        iconUrl: "https://cdn-icons-png.flaticon.com/512/1776/1776597.png",
+        iconUrl: "https://psv4.userapi.com/c237231/u191787332/docs/d53/9e64cf186c1d/1776597.png?extra=ZH5xSQ9JplKqhMuCiRx2mU4V6vdFEn0pQDYfRoYi0ZmrBLg_hIxgzTb7zDVlpIZALfdRgCdowtTuEjzO8uRxRxOCiS7C7TcDZ6RlLsTGBDjoYzDtOS4bzWvielbGULIJB-Vud2ejReUXUTApZ4Kw8EtXSg",
         iconSize: [32, 37],
         iconAnchor: [16, 37]
       }),
       iconMuseums: icon({
-        iconUrl: "https://cdn-icons-png.flaticon.com/512/6767/6767145.png",
+        iconUrl: "https://psv4.userapi.com/c235131/u191787332/docs/d33/81d9212ac2ac/3270984.png?extra=nxDuQV_kF8Lj6qf2t_rTVks2VslFm5cDZraJdjHJ3xWiMng7i-TKwcKXJXIF6Wx5ANESJKxaZdsH76ZdgzxrQuGtt_45jSvgTa7f56V1CRoDoYFyQnnOsOnvjATMCC8RhL_qLjS0cXXbDfypW20SKOn1BA",
         iconSize: [32, 37],
         iconAnchor: [16, 37]
       }),
       iconParks: icon({
-        iconUrl: "https://cdn-icons.flaticon.com/png/512/4104/premium/4104488.png?token=exp=1646075045~hmac=58cbef627735c17a0935b1a58fbe5e16",
+        iconUrl: "https://psv4.userapi.com/c237031/u191787332/docs/d49/8383f8a16ff0/291445.png?extra=FQZqGXQh7rfAAOc2JAI0ZdEfSIgtQDfGtBJF_vrzBTnHwe8Yoi3j59sprDlhtSAd87J9OYjDwXS-VP-A_ADVQFoPqujrpCuQodDIRA5tkftXNrqPeIMdiBdiIHmzmZR5P1WUrQonusVEvIfLFNKJopT47g",
         iconSize: [32, 37],
         iconAnchor: [16, 37]
       }),
       iconTheaters: icon({
-        iconUrl: "https://cdn-icons.flaticon.com/png/512/4539/premium/4539424.png?token=exp=1646075076~hmac=9962180b3ccc23daf2b7ce171a9ce3c5",
+        iconUrl: "https://psv4.userapi.com/c237131/u191787332/docs/d34/32ee4c35c84a/4318583.png?extra=raY5TYIlb5DXtnekXkHQBkXjWcl3eDDmU_wYikbK9pEIvAHylKqv0ENlrm0q1AfRJ043pfYuNqEmTDPTM35w4SZxRVlQAKXlVE2OX9KaNM3QCVpVlWjT6ACqAH-zbB9X7NZXZhn12sigBDviuiB0FdDEyQ",
         iconSize: [32, 37],
         iconAnchor: [16, 37]
       }),
@@ -162,7 +96,9 @@ export default {
   methods: {
     async fetchDataLibrary() {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/alllibrary/");
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/alllibrary/"
+        );
         this.dataLibrary = response.data;
       } catch (a) {
         alert("Ошибка");
@@ -170,7 +106,9 @@ export default {
     },
     async fetchDataCinema() {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/allcinema/");
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/allcinema/"
+        );
         this.dataCinema = response.data;
       } catch (a) {
         alert("Ошибка");
@@ -178,7 +116,9 @@ export default {
     },
     async fetchDataCircuses() {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/allcircuses/");
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/allcircuses/"
+        );
         this.dataCircuses = response.data;
       } catch (a) {
         alert("Ошибка");
@@ -186,7 +126,9 @@ export default {
     },
     async fetchDataConcert() {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/allconcert/");
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/allconcert/"
+        );
         this.dataConcert = response.data;
       } catch (a) {
         alert("Ошибка");
@@ -194,7 +136,9 @@ export default {
     },
     async fetchDataMuseums() {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/allmuseums/");
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/allmuseums/"
+        );
         this.dataMuseums = response.data;
       } catch (a) {
         alert("Ошибка");
@@ -204,27 +148,26 @@ export default {
       try {
         const response = await axios.get("http://127.0.0.1:8000/api/allparks/");
         this.dataParks = response.data;
-
       } catch (a) {
         alert("Ошибка");
       }
     },
     async fetchDataTheaters() {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/alltheaters/");
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/alltheaters/"
+        );
         this.dataTheaters = response.data;
-
       } catch (a) {
         alert("Ошибка");
       }
     },
-    getData(data) {
+    getData(data, flag) {
       try {
-        this.flag = true;
-        this.name = data.data.general.name;
-        this.description = data.data.general.description;
-        this.img = data.data.general.image.url;
-        //alert(this.name);
+        this.flag = flag;
+        this.name = data.name;
+        this.description = data.description;
+        this.img = data.img;
       } catch {
         alert("ошибка");
       }
@@ -233,18 +176,17 @@ export default {
       this.flag = false;
     },
     locationButtonPressed() {
-      if(navigator.geolocation) {
+      if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-          position => {
+          (position) => {
             console.log(position.coords.latitude);
             console.log(position.coords.longitude);
           },
-          error => {
+          (error) => {
             console.log(error.message);
           }
         );
-      }
-      else {
+      } else {
         console.log("Your browser does not suppert geolocation API");
       }
     },
@@ -257,7 +199,6 @@ export default {
     await this.fetchDataMuseums();
     await this.fetchDataParks();
     await this.fetchDataTheaters();
-    console.log(this.data);
     /*let map;
     map = leaflet.map("map").setView([55.5807, 37.3656], 10);
 
@@ -299,7 +240,7 @@ export default {
 
 * {
   -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
 }
 .img-absolute {
   position: absolute;
@@ -308,7 +249,7 @@ export default {
   width: 100%;
   height: 100%;
   -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 .object {
   position: fixed;
@@ -319,9 +260,9 @@ export default {
   background-color: #fff;
   z-index: 1000;
   padding: 50px 30px;
-  -webkit-transition: .6s;
-  -o-transition: .6s;
-  transition: .6s;
+  -webkit-transition: 0.6s;
+  -o-transition: 0.6s;
+  transition: 0.6s;
   overflow-y: auto;
 }
 .object_closed {
@@ -336,19 +277,19 @@ export default {
   width: 30px;
   height: 3px;
   -webkit-transform: rotate(-45deg);
-      -ms-transform: rotate(-45deg);
-          transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
   cursor: pointer;
 }
 .object__close::after {
-  content: '';
+  content: "";
   display: block;
   width: 30px;
   height: 3px;
   background-color: #999;
   -webkit-transform: rotate(90deg);
-      -ms-transform: rotate(90deg);
-          transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);
   position: absolute;
   top: 0;
   left: 0;
