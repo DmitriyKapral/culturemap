@@ -43,7 +43,59 @@
 
     </vs-sidebar>
   </div>
+
+
+
+
+
+
+<div id="map">
+    <l-map :zoom="zoom" :center="center">
+      <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
+      <get-markers :data="dataLibrary" :icon="iconLibrary" @getInfo="getData" />
+      <get-markers :data="dataCinema" :icon="iconCinema" @getInfo="getData" />
+      <get-markers
+        :data="dataCircuses"
+        :icon="iconCircuses"
+        @getInfo="getData"
+      />
+      <get-markers :data="dataConcert" :icon="iconConcert" @getInfo="getData" />
+      <get-markers :data="dataMuseums" :icon="iconMuseums" @getInfo="getData" />
+      <get-markers :data="dataParks" :icon="iconParks" @getInfo="getData" />
+      <get-markers
+        :data="dataTheaters"
+        :icon="iconTheaters"
+        @getInfo="getData"
+      />
+    </l-map>
+    <aside class="object" v-bind:class="{ object_closed: !flag }">
+      <button class="object__close" @click="closeAside"></button>
+      <button @click="locationButtonPressed">Нажми на меня</button>
+      <div class="object__title"></div>
+      <h2>{{ name }}</h2>
+      <div v-html="description"></div>
+      <div class="object__img">
+        <img :src="img" alt="" class="img-absolute" />
+      </div>
+      <div class="object__descr"></div>
+    </aside>
+    
+  </div>
+
+
+
+
+
+
+
 </template>
+
+
+
+
+
+
+
 
 <script>
 export default {
