@@ -17,6 +17,7 @@
         :icon="iconTheaters"
         @getInfo="getData"
       />
+      <get-markers :data="dataСulturePalacesClubs" :icon="iconСulturePalacesClubs" @getInfo="getData" />
     </l-map>
     <info-panel
       :flag="flag"
@@ -29,6 +30,8 @@
     <div>
       <fieldset>
         <legend>Фильтры объектов</legend>
+        <div class="v-options"></div>
+        
         <select>
           <option>500 м</option>
           <option>1000 м</option>
@@ -67,6 +70,14 @@ export default {
   components: { LMap, LTileLayer, GetMarkers, InfoPanel },
   data() {
     return {
+      options: [
+        {
+          name: "1"
+        },
+        {
+          name: "2"
+        }
+      ],
       dataLibrary: [],
       dataCinema: [],
       dataCircuses: [],
@@ -74,6 +85,7 @@ export default {
       dataMuseums: [],
       dataParks: [],
       dataTheaters: [],
+      dataСulturePalacesClubs: [],
       dadadadadad: [],
       centerLat: 48.778444,
       centerLon: 44.777472,
@@ -128,6 +140,12 @@ export default {
       iconTheaters: icon({
         iconUrl:
           "https://psv4.userapi.com/c237131/u191787332/docs/d34/32ee4c35c84a/4318583.png?extra=raY5TYIlb5DXtnekXkHQBkXjWcl3eDDmU_wYikbK9pEIvAHylKqv0ENlrm0q1AfRJ043pfYuNqEmTDPTM35w4SZxRVlQAKXlVE2OX9KaNM3QCVpVlWjT6ACqAH-zbB9X7NZXZhn12sigBDviuiB0FdDEyQ",
+        iconSize: [32, 37],
+        iconAnchor: [16, 37],
+      }),
+      iconСulturePalacesClubs: icon({
+        iconUrl:
+          "https://psv4.userapi.com/c536436/u191787332/docs/d17/526638b0f409/2314735.png?extra=c77iHEMF-gHerIjZQvC1xIkzswpkC3hPsbAqQ2jatl0XpaMo9v67NjL3OSJzX6u0yRAt9IZ8DBV2aoHVZgd63PEcU4ixu9n0ssFHwV4y5tyRMnK2LAhX8sRDBNQSNOLxHo1TqANuKEwc8qt1YgwRhOYO",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
@@ -194,6 +212,7 @@ export default {
     this.dataMuseums = await this.fetchData("museums");
     this.dataParks = await this.fetchData("parks");
     this.dataTheaters = await this.fetchData("theaters");
+    this.dataСulturePalacesClubs = await this.fetchData("culture_palaces_clubs");
     await this.getPosition();
   },
 };
@@ -216,12 +235,18 @@ export default {
   height: 100vh;
 }
 .filter {
-  position: absolute;
+  position: fixed;
   top: 100vw;
+  background-color: #fff;
+  z-index: 900;
+  top: 0px;
+  left: 60px;
+  margin: 10px;
 }
 
 * {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
+
 </style>
