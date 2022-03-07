@@ -2,22 +2,54 @@
   <div id="map">
     <l-map :zoom="zoom" :center="[centerLat, centerLon]">
       <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-      <get-markers :data="dataLibrary" :icon="iconLibrary" @getInfo="getData" />
-      <get-markers :data="dataCinema" :icon="iconCinema" @getInfo="getData" />
       <get-markers
+        v-if="selectCategory.includes('libraries')"
+        :data="dataLibrary"
+        :icon="iconLibrary"
+        @getInfo="getData"
+      />
+      <get-markers
+        v-if="selectCategory.includes('cinema')"
+        :data="dataCinema"
+        :icon="iconCinema"
+        @getInfo="getData"
+      />
+      <get-markers
+        v-if="selectCategory.includes('circuses')"
         :data="dataCircuses"
         :icon="iconCircuses"
         @getInfo="getData"
       />
-      <get-markers :data="dataConcert" :icon="iconConcert" @getInfo="getData" />
-      <get-markers :data="dataMuseums" :icon="iconMuseums" @getInfo="getData" />
-      <get-markers :data="dataParks" :icon="iconParks" @getInfo="getData" />
       <get-markers
+        v-if="selectCategory.includes('concert_halls')"
+        :data="dataConcert"
+        :icon="iconConcert"
+        @getInfo="getData"
+      />
+      <get-markers
+        v-if="selectCategory.includes('museums')"
+        :data="dataMuseums"
+        :icon="iconMuseums"
+        @getInfo="getData"
+      />
+      <get-markers
+        v-if="selectCategory.includes('parks')"
+        :data="dataParks"
+        :icon="iconParks"
+        @getInfo="getData"
+      />
+      <get-markers
+        v-if="selectCategory.includes('theaters')"
         :data="dataTheaters"
         :icon="iconTheaters"
         @getInfo="getData"
       />
-      <get-markers :data="dataСulturePalacesClubs" :icon="iconСulturePalacesClubs" @getInfo="getData" />
+      <get-markers
+        v-if="selectCategory.includes('culture_palaces_clubs')"
+        :data="dataСulturePalacesClubs"
+        :icon="iconСulturePalacesClubs"
+        @getInfo="getData"
+      />
     </l-map>
     <info-panel
       :flag="flag"
@@ -27,33 +59,43 @@
       @closeAside="closeAside"
     />
     <form class="filter">
-    <div>
-      <fieldset>
-        <legend>Фильтры объектов</legend>
-        <div class="v-options"></div>
-        
-        <select>
-          <option>500 м</option>
-          <option>1000 м</option>
-          <option>1500 м</option>
-          <option>3000 м</option>
-          <option>Весь город</option></select
-        ><br />
-        <select multiple>
-          <option>Библиотеки</option>
-          <option>Кинотеатры</option>
-          <option>Цирки</option>
-          <option>Концертные залы</option>
-          <option>Музеи</option>
-          <option>Парки</option>
-          <option>Театры</option>
-        </select>
-      </fieldset>
-    </div>
-  </form>
+      <div>
+        <fieldset>
+          <legend>Фильтры объектов</legend>
+          <select
+            class="form-select form-select-lg mb-3"
+            aria-label=".form-select-lg example"
+            v-model="selectRadius"
+          >
+            <option value="500">500 метров</option>
+            <option value="100">1000 метров</option>
+            <option value="1500">1500 метров</option>
+            <option value="3000">3000 метров</option>
+            <option value="100000">Весь город</option>
+          </select>
+          <div class="v-options"></div>
+          <br />
+          <select
+            class="form-select"
+            multiple
+            aria-label="multiple select example"
+            v-model="selectCategory"
+          >
+            <option value="libraries">Библиотеки</option>
+            <option value="culture_palaces_clubs">ДК и клубы</option>
+            <option value="cinema">Кинотеатры</option>
+            <option value="circuses">Цирки</option>
+            <option value="concert_halls">Концертные залы</option>
+            <option value="museums">Музеи</option>
+            <option value="parks">Парки</option>
+            <option value="theaters">Театры</option>
+          </select>
+          <br />
+          <button @click="ClickData" type="button" class="btn btn-outline-dark">Применить</button>
+        </fieldset>
+      </div>
+    </form>
   </div>
-
-  
 </template>
 
 <script>
@@ -70,13 +112,16 @@ export default {
   components: { LMap, LTileLayer, GetMarkers, InfoPanel },
   data() {
     return {
-      options: [
-        {
-          name: "1"
-        },
-        {
-          name: "2"
-        }
+      selectRadius: 100000,
+      selectCategory: [
+        "libraries",
+        "culture_palaces_clubs",
+        "cinema",
+        "circuses",
+        "concert_halls",
+        "museums",
+        "parks",
+        "theaters",
       ],
       dataLibrary: [],
       dataCinema: [],
@@ -109,7 +154,7 @@ export default {
       }),
       iconCinema: icon({
         iconUrl:
-          "https://psv4.userapi.com/c537232/u191787332/docs/d31/88b8c9663660/6382213.png?extra=QPb5d03GpMcf1nlAyc5rQmLhSYBIMZ6bs9rTyuN1nssCXe765Jt7aDInznWJUM0mGx158pd_K8XI3aXa0DxYtv1eYWNdyasb-_q511ITTTPklMlFvQDH_otEX9Awq6R_Eqbnh784UX5OoS2NmZBVUYyw",
+          "https://psv4.userapi.com/c537232/u191787332/docs/d31/5fcee7bea7de/6382213.png?extra=A8TPHCFOY0hQeYJVgzhMg_8gQRsibS2uLgE3BObgW-kbv5orBYz_NFaLWf9AZ0Wm2tynIh7fPRHzR5xhl2ReaPVEspKSH5HONugNHYEECS3m6_-PnCiFbaAN8ocEE_Czvmg1OeSN7QYWj_mF1Av4Y7T7",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
@@ -152,23 +197,45 @@ export default {
     };
   },
   methods: {
+    //Очень плохо реальзованный фильтр, но рабочий)
+    async getRadiusData(category, lat, long, radius) {
+      try {
+        const response = await axios.post(
+          "http://127.0.0.1:8000/api/categoryget/" + category + "/Волгоград/",
+          {
+            lat: lat,
+            long: long,
+            radius: radius,
+          }
+        );
+        return response.data;
+      } catch (a) {
+        alert("Ошибка");
+      }
+    },
+    async ClickData() {
+      this.dataLibrary = await this.getRadiusData("libraries", this.centerLat, this.centerLon, this.selectRadius);
+      this.dataCinema = await this.getRadiusData("cinema", this.centerLat, this.centerLon, this.selectRadius);
+      this.dataCircuses = await this.getRadiusData("circuses", this.centerLat, this.centerLon, this.selectRadius);
+      this.dataConcert = await this.getRadiusData("concert_halls", this.centerLat, this.centerLon, this.selectRadius);
+      this.dataMuseums = await this.getRadiusData("museums", this.centerLat, this.centerLon, this.selectRadius);
+      this.dataParks = await this.getRadiusData("parks", this.centerLat, this.centerLon, this.selectRadius);
+      this.dataTheaters = await this.getRadiusData("theaters", this.centerLat, this.centerLon, this.selectRadius);
+      this.dataСulturePalacesClubs = await this.getRadiusData(
+        "culture_palaces_clubs", this.centerLat, this.centerLon, this.selectRadius
+      );
+    },
+
+
+
+
+    
     async fetchData(category) {
       try {
         const response = await axios.get(
           "http://127.0.0.1:8000/api/categoryget/" + category + "/Волгоград/"
         );
-        return(response.data)
-      } catch (a) {
-        alert("Ошибка");
-      }
-    },
-    async getPosition() {
-      try {
-        const response = await axios.get(
-          "https://nominatim.openstreetmap.org/reverse?format=json&lat=48.7784448&lon=44.777472"
-        );
-
-        this.dadadadadad = JSON.stringify(response);
+        return response.data;
       } catch (a) {
         alert("Ошибка");
       }
@@ -212,8 +279,9 @@ export default {
     this.dataMuseums = await this.fetchData("museums");
     this.dataParks = await this.fetchData("parks");
     this.dataTheaters = await this.fetchData("theaters");
-    this.dataСulturePalacesClubs = await this.fetchData("culture_palaces_clubs");
-    await this.getPosition();
+    this.dataСulturePalacesClubs = await this.fetchData(
+      "culture_palaces_clubs"
+    );
   },
 };
 </script>
@@ -248,5 +316,4 @@ export default {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
-
 </style>

@@ -2,7 +2,6 @@
   <div>
     <aside class="object" v-bind:class="{ object_closed: !flag }">
       <button class="object__close" @click="closeAside"></button>
-      <button @click="locationButtonPressed">Нажми на меня</button>
       <div class="object__title"></div>
       <h2>{{ name }}</h2>
       <div v-html="description"></div>
