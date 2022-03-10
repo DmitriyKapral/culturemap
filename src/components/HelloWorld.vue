@@ -45,7 +45,7 @@
   </div>
 
 
-
+:icon="icon"
 
 
 
