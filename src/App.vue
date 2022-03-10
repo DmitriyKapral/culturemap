@@ -3,49 +3,49 @@
     <l-map :zoom="zoom" :center="[centerLat, centerLon]">
       <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
       <get-markers
-        v-if="selectCategory.includes('libraries')"
+        v-if="selectedCategory.includes('libraries')"
         :data="dataLibrary"
         :icon="iconLibrary"
         @getInfo="getData"
       />
       <get-markers
-        v-if="selectCategory.includes('cinema')"
+        v-if="selectedCategory.includes('cinema')"
         :data="dataCinema"
         :icon="iconCinema"
         @getInfo="getData"
       />
       <get-markers
-        v-if="selectCategory.includes('circuses')"
+        v-if="selectedCategory.includes('circuses')"
         :data="dataCircuses"
         :icon="iconCircuses"
         @getInfo="getData"
       />
       <get-markers
-        v-if="selectCategory.includes('concert_halls')"
+        v-if="selectedCategory.includes('concert_halls')"
         :data="dataConcert"
         :icon="iconConcert"
         @getInfo="getData"
       />
       <get-markers
-        v-if="selectCategory.includes('museums')"
+        v-if="selectedCategory.includes('museums')"
         :data="dataMuseums"
         :icon="iconMuseums"
         @getInfo="getData"
       />
       <get-markers
-        v-if="selectCategory.includes('parks')"
+        v-if="selectedCategory.includes('parks')"
         :data="dataParks"
         :icon="iconParks"
         @getInfo="getData"
       />
       <get-markers
-        v-if="selectCategory.includes('theaters')"
+        v-if="selectedCategory.includes('theaters')"
         :data="dataTheaters"
         :icon="iconTheaters"
         @getInfo="getData"
       />
       <get-markers
-        v-if="selectCategory.includes('culture_palaces_clubs')"
+        v-if="selectedCategory.includes('culture_palaces_clubs')"
         :data="dataСulturePalacesClubs"
         :icon="iconСulturePalacesClubs"
         @getInfo="getData"
@@ -123,6 +123,16 @@ export default {
         "parks",
         "theaters",
       ],
+      selectedCategory: [
+        "libraries",
+        "culture_palaces_clubs",
+        "cinema",
+        "circuses",
+        "concert_halls",
+        "museums",
+        "parks",
+        "theaters",
+      ],
       dataLibrary: [],
       dataCinema: [],
       dataCircuses: [],
@@ -148,49 +158,49 @@ export default {
 
       iconLibrary: icon({
         iconUrl:
-          "https://psv4.userapi.com/c237331/u191787332/docs/d59/9da5b3c854f7/book.png?extra=kRxn3C3mQmXtfL2vRNVeIXYJ-rLfcmii4Pp_Oov92f7X7WIAmT1mr05Vq22eCY26dr30pVsC6E0ESIV7pcDIaQhNejRJP4GOS03wkC0d5EN4T3wxcB9nMMhzkcHv3cAfOhmHYTxu7YJrlHSj5eL067D8yA",
+          '/icons/book.png',
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
       iconCinema: icon({
         iconUrl:
-          "https://psv4.userapi.com/c537232/u191787332/docs/d31/5fcee7bea7de/6382213.png?extra=A8TPHCFOY0hQeYJVgzhMg_8gQRsibS2uLgE3BObgW-kbv5orBYz_NFaLWf9AZ0Wm2tynIh7fPRHzR5xhl2ReaPVEspKSH5HONugNHYEECS3m6_-PnCiFbaAN8ocEE_Czvmg1OeSN7QYWj_mF1Av4Y7T7",
+          "/icons/cinema.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
       iconCircuses: icon({
         iconUrl:
-          "https://psv4.userapi.com/c537232/u191787332/docs/d22/816759678554/895305.png?extra=4BQ0okQPhiba-KFTFeTs3paoV350bCRlEirYCJVhD3WQvmlHbDrBgyqtNe_qJqoHb5oVVgYbPqwSG2qVKLz3ywkdTu0m1y25liE0KGmuijsrn8OLZk4KvHlQ7ds-QP98fAAT68UbfIraBJG8L8qwkhWJuQ",
+          "/icons/circuses.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
       iconConcert: icon({
         iconUrl:
-          "https://psv4.userapi.com/c237231/u191787332/docs/d53/9e64cf186c1d/1776597.png?extra=ZH5xSQ9JplKqhMuCiRx2mU4V6vdFEn0pQDYfRoYi0ZmrBLg_hIxgzTb7zDVlpIZALfdRgCdowtTuEjzO8uRxRxOCiS7C7TcDZ6RlLsTGBDjoYzDtOS4bzWvielbGULIJB-Vud2ejReUXUTApZ4Kw8EtXSg",
+          "/icons/concert.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
       iconMuseums: icon({
         iconUrl:
-          "https://psv4.userapi.com/c235131/u191787332/docs/d33/81d9212ac2ac/3270984.png?extra=nxDuQV_kF8Lj6qf2t_rTVks2VslFm5cDZraJdjHJ3xWiMng7i-TKwcKXJXIF6Wx5ANESJKxaZdsH76ZdgzxrQuGtt_45jSvgTa7f56V1CRoDoYFyQnnOsOnvjATMCC8RhL_qLjS0cXXbDfypW20SKOn1BA",
+          "/icons/museum.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
       iconParks: icon({
         iconUrl:
-          "https://psv4.userapi.com/c237031/u191787332/docs/d49/8383f8a16ff0/291445.png?extra=FQZqGXQh7rfAAOc2JAI0ZdEfSIgtQDfGtBJF_vrzBTnHwe8Yoi3j59sprDlhtSAd87J9OYjDwXS-VP-A_ADVQFoPqujrpCuQodDIRA5tkftXNrqPeIMdiBdiIHmzmZR5P1WUrQonusVEvIfLFNKJopT47g",
+          "/icons/parks.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
       iconTheaters: icon({
         iconUrl:
-          "https://psv4.userapi.com/c237131/u191787332/docs/d34/32ee4c35c84a/4318583.png?extra=raY5TYIlb5DXtnekXkHQBkXjWcl3eDDmU_wYikbK9pEIvAHylKqv0ENlrm0q1AfRJ043pfYuNqEmTDPTM35w4SZxRVlQAKXlVE2OX9KaNM3QCVpVlWjT6ACqAH-zbB9X7NZXZhn12sigBDviuiB0FdDEyQ",
+          "/icons/theaters.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
       iconСulturePalacesClubs: icon({
         iconUrl:
-          "https://psv4.userapi.com/c536436/u191787332/docs/d17/526638b0f409/2314735.png?extra=c77iHEMF-gHerIjZQvC1xIkzswpkC3hPsbAqQ2jatl0XpaMo9v67NjL3OSJzX6u0yRAt9IZ8DBV2aoHVZgd63PEcU4ixu9n0ssFHwV4y5tyRMnK2LAhX8sRDBNQSNOLxHo1TqANuKEwc8qt1YgwRhOYO",
+          "/icons/culturepalacesclubs.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
@@ -214,6 +224,7 @@ export default {
       }
     },
     async ClickData() {
+      this.selectedCategory = this.selectCategory;
       this.dataLibrary = await this.getRadiusData("libraries", this.centerLat, this.centerLon, this.selectRadius);
       this.dataCinema = await this.getRadiusData("cinema", this.centerLat, this.centerLon, this.selectRadius);
       this.dataCircuses = await this.getRadiusData("circuses", this.centerLat, this.centerLon, this.selectRadius);
@@ -224,12 +235,9 @@ export default {
       this.dataСulturePalacesClubs = await this.getRadiusData(
         "culture_palaces_clubs", this.centerLat, this.centerLon, this.selectRadius
       );
+      
     },
-
-
-
-
-    
+ 
     async fetchData(category) {
       try {
         const response = await axios.get(
@@ -250,23 +258,7 @@ export default {
         alert("ошибка");
       }
     },
-    locationButtonPressed() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            this.centerLat = position.coords.latitude;
-            this.centerLon = position.coords.longitude;
-            console.log(position.coords.latitude);
-            console.log(position.coords.longitude);
-          },
-          (error) => {
-            console.log(error.message);
-          }
-        );
-      } else {
-        console.log("Your browser does not suppert geolocation API");
-      }
-    },
+    
     closeAside(flag) {
       this.flag = flag;
     },

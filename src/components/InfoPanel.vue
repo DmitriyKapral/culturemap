@@ -91,7 +91,7 @@ export default {
   display: block;
   width: 30px;
   height: 3px;
-  background-color: #999;
+  background-color: black;
   -webkit-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
   transform: rotate(90deg);
