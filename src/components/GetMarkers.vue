@@ -35,7 +35,9 @@ export default {
       info: {
         name: '',
         description: '',
-        img: ''
+        img: '',
+        contacts: [],
+        workingSchedule: [],
       }
     }
 
@@ -46,6 +48,8 @@ export default {
       this.info.name = data.data.general.name;
       this.info.description = data.data.general.description;
       this.info.img = data.data.general.image.url;
+      this.info.contacts = data.data.general.contacts;
+      this.info.workingSchedule = data.data.general.workingSchedule;
       this.$emit('getInfo', this.info, this.flag);
     }
   }

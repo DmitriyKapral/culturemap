@@ -8,6 +8,14 @@
       <div class="object__img">
         <img :src="img" alt="" class="img-absolute" />
       </div>
+      <div>
+        <p>Контакты для связи:</p>
+        <p>Email: {{ contacts.email }}</p>
+        <strong>Дни работы:</strong>
+        <div v-for="(work, index) in workingSchedule" v-bind:key="work">
+          {{daysOfWeek[index]}}: {{work.from}} - {{work.to}}
+        </div>
+      </div>
       <div class="object__descr"></div>
     </aside>
   </div>
@@ -15,12 +23,21 @@
 
 <script>
 export default {
-    emits: ["closeAside"],
-    data() {
-      return {
-          flagClose: false,
-      }  
-    },
+  emits: ["closeAside"],
+  data() {
+    return {
+      flagClose: false,
+      daysOfWeek: [
+        "Понедельник",
+        "Вторник",
+        "Среда",
+        "Четверг",
+        "Пятница",
+        "Суббота",
+        "Воскресенье",
+      ],
+    };
+  },
   props: {
     flag: {
       type: Boolean,
@@ -34,15 +51,19 @@ export default {
     img: {
       type: String,
     },
+    contacts: {
+      type: Object,
+    },
+    workingSchedule: {
+      type: Object,
+    },
   },
   methods: {
     closeAside() {
       this.flagClose = false;
-      this.$emit('closeAside', this.flagClose);
-
+      this.$emit("closeAside", this.flagClose);
     },
   },
-  
 };
 </script>
 
@@ -69,6 +90,7 @@ export default {
   -o-transition: 0.6s;
   transition: 0.6s;
   overflow-y: auto;
+  text-align: left;
 }
 .object_closed {
   left: -40%;

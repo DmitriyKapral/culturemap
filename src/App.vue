@@ -56,6 +56,8 @@
       :name="name"
       :description="description"
       :img="img"
+      :contacts="contacts"
+      :workingSchedule="workingSchedule"
       @closeAside="closeAside"
     />
     <form class="filter">
@@ -112,6 +114,8 @@ export default {
   components: { LMap, LTileLayer, GetMarkers, InfoPanel },
   data() {
     return {
+      contacts: [],
+      workingSchedule: [],
       selectRadius: 100000,
       selectCategory: [
         "libraries",
@@ -254,6 +258,8 @@ export default {
         this.name = data.name;
         this.description = data.description;
         this.img = data.img;
+        this.contacts = data.contacts;
+        this.workingSchedule = data.workingSchedule;
       } catch {
         alert("ошибка");
       }
