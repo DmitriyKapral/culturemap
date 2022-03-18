@@ -6,58 +6,67 @@
         v-if="selectedCategory.includes('libraries')"
         :data="dataLibrary"
         :icon="iconLibrary"
+        :testEvents="testEvent"
         @getInfo="getData"
       />
       <get-markers
         v-if="selectedCategory.includes('cinema')"
         :data="dataCinema"
         :icon="iconCinema"
+        :testEvents="testEvent"
         @getInfo="getData"
       />
       <get-markers
         v-if="selectedCategory.includes('circuses')"
         :data="dataCircuses"
         :icon="iconCircuses"
+        :testEvents="testEvent"
         @getInfo="getData"
       />
       <get-markers
         v-if="selectedCategory.includes('concert_halls')"
         :data="dataConcert"
         :icon="iconConcert"
+        :testEvents="testEvent"
         @getInfo="getData"
       />
       <get-markers
         v-if="selectedCategory.includes('museums')"
         :data="dataMuseums"
         :icon="iconMuseums"
+        :testEvents="testEvent"
         @getInfo="getData"
       />
       <get-markers
         v-if="selectedCategory.includes('parks')"
         :data="dataParks"
         :icon="iconParks"
+        :testEvents="testEvent"
         @getInfo="getData"
       />
       <get-markers
         v-if="selectedCategory.includes('theaters')"
         :data="dataTheaters"
         :icon="iconTheaters"
+        :testEvents="testEvent"
         @getInfo="getData"
       />
       <get-markers
         v-if="selectedCategory.includes('culture_palaces_clubs')"
         :data="dataСulturePalacesClubs"
         :icon="iconСulturePalacesClubs"
+        :testEvents="testEvent"
         @getInfo="getData"
       />
     </l-map>
     <info-panel
       :flag="flag"
-      :name="name"
+      :nameinfo="name"
       :description="description"
       :img="img"
       :contacts="contacts"
       :workingSchedule="workingSchedule"
+      :testEvents="eventsss"
       @closeAside="closeAside"
     />
     <form class="filter">
@@ -115,6 +124,7 @@ export default {
   data() {
     return {
       contacts: [],
+      eventsss: [],
       workingSchedule: [],
       selectRadius: 100000,
       selectCategory: [
@@ -159,6 +169,7 @@ export default {
       name: "",
       description: "",
       img: "",
+      testEvent: [],
 
       iconLibrary: icon({
         iconUrl:
@@ -241,6 +252,16 @@ export default {
       );
       
     },
+    async testEvents() {
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/testevent/"
+        );
+        return response.data;
+      } catch (a) {
+        alert("Ошибка");
+      }
+    },
  
     async fetchData(category) {
       try {
@@ -260,6 +281,7 @@ export default {
         this.img = data.img;
         this.contacts = data.contacts;
         this.workingSchedule = data.workingSchedule;
+        this.eventsss = data.testingEvents;
       } catch {
         alert("ошибка");
       }
@@ -280,6 +302,8 @@ export default {
     this.dataСulturePalacesClubs = await this.fetchData(
       "culture_palaces_clubs"
     );
+    this.testEvent = await this.testEvents();
+    console.log(this.testEvent.filter(data => data.data.general.places[0].id == 8201))
   },
 };
 </script>

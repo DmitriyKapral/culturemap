@@ -27,6 +27,9 @@ export default {
     },
     icon: {
       type: Object
+    },
+    testEvents: {
+      type: Array
     }
   },
   data() {
@@ -38,6 +41,7 @@ export default {
         img: '',
         contacts: [],
         workingSchedule: [],
+        testingEvents: [],
       }
     }
 
@@ -50,6 +54,7 @@ export default {
       this.info.img = data.data.general.image.url;
       this.info.contacts = data.data.general.contacts;
       this.info.workingSchedule = data.data.general.workingSchedule;
+      this.info.testingEvents = this.testEvents.filter(event => event.data.general.places[0].id == data.data.general.id);
       this.$emit('getInfo', this.info, this.flag);
     }
   }

@@ -1,23 +1,68 @@
 <template>
   <div>
     <aside class="object" v-bind:class="{ object_closed: !flag }">
+      <button
+        v-for="tab in tabs"
+        v-bind:key="tab"
+        v-bind:class="['tab-button', { active: currentTab === tab }]"
+        v-on:click="currentTab = tab"
+      >
+        {{ tab }}
+      </button>
+
+      <component v-bind:is="currentTabComponent" class="tab"></component>
+
       <button class="object__close" @click="closeAside"></button>
-      <div class="object__title"></div>
-      <h2>{{ name }}</h2>
-      <div v-html="description"></div>
-      <div class="object__img">
-        <img :src="img" alt="" class="img-absolute" />
-      </div>
-      <div>
-        <p>Контакты для связи:</p>
-        <p>Email: {{ contacts.email }}</p>
-        <strong>Дни работы:</strong>
-        <div v-for="(work, index) in workingSchedule" v-bind:key="work">
-          {{daysOfWeek[index]}}: {{work.from}} - {{work.to}}
+      <div v-if="bool">
+        <h2>{{ nameinfo }}</h2>
+        <div v-html="description"></div>
+        <div class="object__img">
+          <img :src="img" alt="" class="img-absolute" />
         </div>
+        <div>
+          <p>Контакты для связи:</p>
+          <p>Email: {{ contacts.email }}</p>
+          <strong>Дни работы:</strong>
+          <div v-for="(work, index) in workingSchedule" v-bind:key="work">
+            {{ daysOfWeek[index] }}: {{ work.from }} - {{ work.to }}
+          </div>
+        </div>
+        <div class="object__descr"></div>
       </div>
-      <div class="object__descr"></div>
+      <div v-if="!bool">
+        <table cellspacing="0" cellpadding="5" border="1">
+          <tr>
+            <th>Название мероприятия</th>
+            <th>Возврастное ограничение</th>
+            <th>Категория</th>
+            <th>Платно</th>
+            <th></th>
+          </tr>
+          <tr v-for="event in testEvents" v-bind:key="event._id">
+            <td>{{ event.data.general.name }}</td>
+            <td>{{ event.data.general.ageRestriction }}</td>
+            <td>{{ event.data.general.category.name }}</td>
+            <td>{{ trueFalse(event.data.general.isFree) }}</td>
+            <td><button @click="openAsideMore(event.data.general)">Подробнее</button></td>
+          </tr>
+        </table>
+      </div>
     </aside>
+    <div>
+      <aside class="more object" v-bind:class="{ object_closed: !more }">
+        <button class="object__close" @click="closeAsideMore"></button>
+        <h2>{{ moreEvent.name }}</h2>
+        <div v-html="moreEvent.description"></div>
+        <div v-if="moreEvent.hasOwnProperty('image')" class="object__img">
+          <img :src="moreEvent.image.url" alt="" class="img-absolute" />
+        </div>
+        <div v-if="moreEvent.price"><strong>Стоимость входа: </strong>{{ moreEvent.price }}</div>
+        <div>Сеансы: </div>
+        <div v-for="seance in moreEvent.seances" v-bind:key="seance">
+          {{ seance.start }} - {{ seance.end }}
+        </div>
+      </aside>
+    </div>
   </div>
 </template>
 
@@ -36,13 +81,20 @@ export default {
         "Суббота",
         "Воскресенье",
       ],
+      currentTab: "Информация",
+      tabs: ["Информация", "Мероприятия"],
+      bool: true,
+      events: [],
+      moreEvent: [],
+      isFree: "",
+      more: false,
     };
   },
   props: {
     flag: {
       type: Boolean,
     },
-    name: {
+    nameinfo: {
       type: String,
     },
     description: {
@@ -57,11 +109,35 @@ export default {
     workingSchedule: {
       type: Object,
     },
+    testEvents: {
+      type: Array,
+    },
   },
   methods: {
     closeAside() {
       this.flagClose = false;
       this.$emit("closeAside", this.flagClose);
+    },
+    closeAsideMore() {
+      this.more = false;
+    },
+    openAsideMore(moreData) {
+      this.more = true;
+      this.moreEvent = moreData;
+    },
+    currentTabComponent() {
+      if (this.currentTab == "Мероприятия") {
+        this.bool = false;
+      } else {
+        this.bool = true;
+      }
+    },
+    trueFalse(Free) {
+      if (!Free) {
+        return "Платное";
+      } else {
+        return "Бесплатно";
+      }
     },
   },
 };
@@ -76,6 +152,9 @@ export default {
   height: 100%;
   -o-object-fit: cover;
   object-fit: cover;
+}
+.more {
+  z-index: 1001;
 }
 .object {
   position: fixed;
@@ -130,5 +209,25 @@ export default {
   position: relative;
   padding-bottom: 65%;
   margin-bottom: 25px;
+}
+.tab-button {
+  padding: 6px 20px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background: #f0f0f0;
+  margin-bottom: -25px;
+  margin-right: -1px;
+  width: 300px;
+}
+.tab-button:hover {
+  background: #e0e0e0;
+}
+.tab-button.active {
+  background: #e0e0e0;
+}
+.t1 {
+  table-layout: fixed;
 }
 </style>
