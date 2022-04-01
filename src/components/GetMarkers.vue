@@ -28,7 +28,7 @@ export default {
     icon: {
       type: Object
     },
-    testEvents: {
+    events: {
       type: Array
     }
   },
@@ -41,20 +41,20 @@ export default {
         img: '',
         contacts: [],
         workingSchedule: [],
-        testingEvents: [],
+        filterEvents: [],
       }
     }
 
   },
   methods: {
-    getInfo(data) {
+    getInfo(item) {
       this.flag = true;
-      this.info.name = data.data.general.name;
-      this.info.description = data.data.general.description;
-      this.info.img = data.data.general.image.url;
-      this.info.contacts = data.data.general.contacts;
-      this.info.workingSchedule = data.data.general.workingSchedule;
-      this.info.testingEvents = this.testEvents.filter(event => event.data.general.places[0].id == data.data.general.id);
+      this.info.name = item.data.general.name;
+      this.info.description = item.data.general.description;
+      this.info.img = item.data.general.image.url;
+      this.info.contacts = item.data.general.contacts;
+      this.info.workingSchedule = item.data.general.workingSchedule;
+      this.info.filterEvents = this.events.filter(event => event.data.general.places[0].id == item.data.general.id);
       this.$emit('getInfo', this.info, this.flag);
     }
   }

@@ -38,7 +38,7 @@
             <th>Платно</th>
             <th></th>
           </tr>
-          <tr v-for="event in testEvents" v-bind:key="event._id">
+          <tr v-for="event in selectEvents" v-bind:key="event._id">
             <td>{{ event.data.general.name }}</td>
             <td>{{ event.data.general.ageRestriction }}</td>
             <td>{{ event.data.general.category.name }}</td>
@@ -109,7 +109,7 @@ export default {
     workingSchedule: {
       type: Object,
     },
-    testEvents: {
+    selectEvents: {
       type: Array,
     },
   },

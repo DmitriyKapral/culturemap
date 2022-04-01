@@ -1,61 +1,61 @@
 <template>
   <div id="map">
-    <l-map :zoom="zoom" :center="[centerLat, centerLon]">
+    <l-map :zoom="zoom" :center="center" @update:center="centerUpdated">
       <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
       <get-markers
         v-if="selectedCategory.includes('libraries')"
         :data="dataLibrary"
         :icon="iconLibrary"
-        :testEvents="testEvent"
+        :events="eventsLibrary"
         @getInfo="getData"
       />
       <get-markers
         v-if="selectedCategory.includes('cinema')"
         :data="dataCinema"
         :icon="iconCinema"
-        :testEvents="testEvent"
+        :events="eventsCinema"
         @getInfo="getData"
       />
       <get-markers
         v-if="selectedCategory.includes('circuses')"
         :data="dataCircuses"
         :icon="iconCircuses"
-        :testEvents="testEvent"
+        :events="eventsCircuses"
         @getInfo="getData"
       />
       <get-markers
         v-if="selectedCategory.includes('concert_halls')"
         :data="dataConcert"
         :icon="iconConcert"
-        :testEvents="testEvent"
+        :events="eventsConcert"
         @getInfo="getData"
       />
       <get-markers
         v-if="selectedCategory.includes('museums')"
         :data="dataMuseums"
         :icon="iconMuseums"
-        :testEvents="testEvent"
+        :events="eventsMuseums"
         @getInfo="getData"
       />
       <get-markers
         v-if="selectedCategory.includes('parks')"
         :data="dataParks"
         :icon="iconParks"
-        :testEvents="testEvent"
+        :events="eventsParks"
         @getInfo="getData"
       />
       <get-markers
         v-if="selectedCategory.includes('theaters')"
         :data="dataTheaters"
         :icon="iconTheaters"
-        :testEvents="testEvent"
+        :events="eventsTheaters"
         @getInfo="getData"
       />
       <get-markers
         v-if="selectedCategory.includes('culture_palaces_clubs')"
         :data="dataСulturePalacesClubs"
         :icon="iconСulturePalacesClubs"
-        :testEvents="testEvent"
+        :events="eventsСulturePalacesClubs"
         @getInfo="getData"
       />
     </l-map>
@@ -66,7 +66,7 @@
       :img="img"
       :contacts="contacts"
       :workingSchedule="workingSchedule"
-      :testEvents="eventsss"
+      :selectEvents="selectEvents"
       @closeAside="closeAside"
     />
     <form class="filter">
@@ -102,7 +102,53 @@
             <option value="theaters">Театры</option>
           </select>
           <br />
-          <button @click="ClickData" type="button" class="btn btn-outline-dark">Применить</button>
+          <button @click="ClickData" type="button" class="btn btn-outline-dark">
+            Применить
+          </button>
+        </fieldset>
+      </div>
+    </form>
+
+    <form class="filter_developments">
+      <div>
+        <fieldset>
+          <legend>Фильтры объектов</legend>
+          <select
+            class="form-select"
+            multiple
+            aria-label="multiple select example"
+            v-model="selectCategoryEvents"
+          >
+            <option v-for="category in categoryEvents" v-bind:key="category">
+              {{ category }}
+            </option>
+          </select>
+          <br />
+          <select v-model="selectedFree">
+            <option
+              v-for="FreeFalse in freeOrFalse"
+              v-bind:key="FreeFalse"
+              :value="FreeFalse.value"
+            >
+              {{ FreeFalse.text }}
+            </option>
+          </select>
+          <br />
+          <input v-model="inputAge" type="number" min="0" max="18"/>
+          <br />
+          <button
+            type="button"
+            class="btn btn-outline-dark"
+            @click="ClickEventsData"
+          >
+            Применить
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-dark"
+          >
+            Показать список и применить
+          </button>
         </fieldset>
       </div>
     </form>
@@ -123,8 +169,37 @@ export default {
   components: { LMap, LTileLayer, GetMarkers, InfoPanel },
   data() {
     return {
+      inputAge: 0,
+      selectedFree: 2,
+      freeOrFalse: [
+        {text: "Да", value: 1},
+        {text: "Нет", value: 0},
+        {text: "Все", value: 2}
+      ],
+      categoryEvents: [
+        "Встречи",
+        "Прочие",
+        "Выставки",
+        "Концерты",
+        "Праздники",
+        "Обучение",
+        "Спектакли",
+        "Кино",
+        "Экскурсии"
+      ],
+      selectCategoryEvents: [
+        "Встречи",
+        "Прочие",
+        "Выставки",
+        "Концерты",
+        "Праздники",
+        "Обучение",
+        "Спектакли",
+        "Кино",
+        "Экскурсии",
+      ],
       contacts: [],
-      eventsss: [],
+      selectEvents: [],
       workingSchedule: [],
       selectRadius: 100000,
       selectCategory: [
@@ -147,6 +222,7 @@ export default {
         "parks",
         "theaters",
       ],
+      city: "",
       dataLibrary: [],
       dataCinema: [],
       dataCircuses: [],
@@ -155,9 +231,17 @@ export default {
       dataParks: [],
       dataTheaters: [],
       dataСulturePalacesClubs: [],
+      eventsLibrary: [],
+      eventsCinema: [],
+      eventsCircuses: [],
+      eventsConcert: [],
+      eventsMuseums: [],
+      eventsParks: [],
+      eventsTheaters: [],
+      eventsСulturePalacesClubs: [],
       dadadadadad: [],
-      centerLat: 48.778444,
-      centerLon: 44.777472,
+      centerLat: 48.77834045,
+      centerLon: 44.77727568,
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -169,64 +253,105 @@ export default {
       name: "",
       description: "",
       img: "",
-      testEvent: [],
+      events: [],
 
       iconLibrary: icon({
-        iconUrl:
-          '/icons/book.png',
+        iconUrl: "/icons/book.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
       iconCinema: icon({
-        iconUrl:
-          "/icons/cinema.png",
+        iconUrl: "/icons/cinema.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
       iconCircuses: icon({
-        iconUrl:
-          "/icons/circuses.png",
+        iconUrl: "/icons/circuses.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
       iconConcert: icon({
-        iconUrl:
-          "/icons/concert.png",
+        iconUrl: "/icons/concert.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
       iconMuseums: icon({
-        iconUrl:
-          "/icons/museum.png",
+        iconUrl: "/icons/museum.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
       iconParks: icon({
-        iconUrl:
-          "/icons/parks.png",
+        iconUrl: "/icons/parks.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
       iconTheaters: icon({
-        iconUrl:
-          "/icons/theaters.png",
+        iconUrl: "/icons/theaters.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
       iconСulturePalacesClubs: icon({
-        iconUrl:
-          "/icons/culturepalacesclubs.png",
+        iconUrl: "/icons/culturepalacesclubs.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
     };
   },
   methods: {
+    async fetchFilterEvents(category) {
+      try {
+        const response = await axios.post(
+          "http://127.0.0.1:8000/api/geteventscategory/" +
+            category +
+            "/" +
+            this.city +
+            "/",
+            {
+              category: this.selectCategoryEvents,
+              ageRestriction: this.inputAge,
+              isFree: this.selectedFree
+            }
+        );
+        return response.data;
+      } catch (a) {
+        alert("Ошибка");
+      }
+    },
+
+    async ClickEventsData() {
+      this.eventsLibrary = await this.fetchFilterEvents(
+        "libraries"
+      );
+      this.eventsCinema = await this.fetchFilterEvents(
+        "cinema"
+      );
+      this.eventsCircuses = await this.fetchFilterEvents(
+        "circuses"
+      );
+      this.eventsConcert = await this.fetchFilterEvents(
+        "concert_halls"
+      );
+      this.eventsMuseums = await this.fetchFilterEvents(
+        "museums"
+      );
+      this.eventsParks = await this.fetchFilterEvents(
+        "parks"
+      );
+      this.eventsTheaters = await this.fetchFilterEvents(
+        "theaters"
+      );
+      this.eventsСulturePalacesClubs = await this.fetchFilterEvents(
+        "culture_palaces_clubs"
+      );
+      alert("ОК")
+    },
+
+
     //Очень плохо реальзованный фильтр, но рабочий)
     async getRadiusData(category, lat, long, radius) {
       try {
         const response = await axios.post(
-          "http://127.0.0.1:8000/api/categoryget/" + category + "/Волгоград/",
+          "http://127.0.0.1:8000/api/categoryget/" + category + "/" + this.city + "/",
           {
             lat: lat,
             long: long,
@@ -240,19 +365,56 @@ export default {
     },
     async ClickData() {
       this.selectedCategory = this.selectCategory;
-      this.dataLibrary = await this.getRadiusData("libraries", this.centerLat, this.centerLon, this.selectRadius);
-      this.dataCinema = await this.getRadiusData("cinema", this.centerLat, this.centerLon, this.selectRadius);
-      this.dataCircuses = await this.getRadiusData("circuses", this.centerLat, this.centerLon, this.selectRadius);
-      this.dataConcert = await this.getRadiusData("concert_halls", this.centerLat, this.centerLon, this.selectRadius);
-      this.dataMuseums = await this.getRadiusData("museums", this.centerLat, this.centerLon, this.selectRadius);
-      this.dataParks = await this.getRadiusData("parks", this.centerLat, this.centerLon, this.selectRadius);
-      this.dataTheaters = await this.getRadiusData("theaters", this.centerLat, this.centerLon, this.selectRadius);
-      this.dataСulturePalacesClubs = await this.getRadiusData(
-        "culture_palaces_clubs", this.centerLat, this.centerLon, this.selectRadius
+      this.dataLibrary = await this.getRadiusData(
+        "libraries",
+        this.centerLat,
+        this.centerLon,
+        this.selectRadius
       );
-      
+      this.dataCinema = await this.getRadiusData(
+        "cinema",
+        this.centerLat,
+        this.centerLon,
+        this.selectRadius
+      );
+      this.dataCircuses = await this.getRadiusData(
+        "circuses",
+        this.centerLat,
+        this.centerLon,
+        this.selectRadius
+      );
+      this.dataConcert = await this.getRadiusData(
+        "concert_halls",
+        this.centerLat,
+        this.centerLon,
+        this.selectRadius
+      );
+      this.dataMuseums = await this.getRadiusData(
+        "museums",
+        this.centerLat,
+        this.centerLon,
+        this.selectRadius
+      );
+      this.dataParks = await this.getRadiusData(
+        "parks",
+        this.centerLat,
+        this.centerLon,
+        this.selectRadius
+      );
+      this.dataTheaters = await this.getRadiusData(
+        "theaters",
+        this.centerLat,
+        this.centerLon,
+        this.selectRadius
+      );
+      this.dataСulturePalacesClubs = await this.getRadiusData(
+        "culture_palaces_clubs",
+        this.centerLat,
+        this.centerLon,
+        this.selectRadius
+      );
     },
-    async testEvents() {
+    /*async testEvents() {
       try {
         const response = await axios.get(
           "http://127.0.0.1:8000/api/testevent/"
@@ -261,12 +423,12 @@ export default {
       } catch (a) {
         alert("Ошибка");
       }
-    },
- 
-    async fetchData(category) {
+    },*/
+
+    async fetchData(category, city) {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:8000/api/categoryget/" + category + "/Волгоград/"
+          "http://127.0.0.1:8000/api/categoryget/" + category + "/" + city + "/"
         );
         return response.data;
       } catch (a) {
@@ -281,29 +443,100 @@ export default {
         this.img = data.img;
         this.contacts = data.contacts;
         this.workingSchedule = data.workingSchedule;
-        this.eventsss = data.testingEvents;
+        this.selectEvents = data.filterEvents;
       } catch {
         alert("ошибка");
       }
     },
-    
+
     closeAside(flag) {
       this.flag = flag;
     },
+
+    async getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            this.centerLat = position.coords.latitude;
+            this.centerLon = position.coords.longitude;
+            this.centerUpdated([this.centerLat, this.centerLon]);
+            console.log(position.coords.latitude);
+            console.log(position.coords.longitude);
+          },
+          (error) => {
+            console.log(error.message);
+          }
+        );
+      } else {
+        alert("Разрешите доступ к данным местоположения");
+      }
+    },
+
+    centerUpdated(center) {
+      this.center = center;
+    },
+
+    async postCity(lat, lon) {
+      try {
+        const response = await axios.post(
+          "http://127.0.0.1:8000/api/position/",
+          {
+            lat: lat,
+            lon: lon,
+          }
+        );
+        return response.data;
+      } catch (a) {
+        alert("Ошибка");
+      }
+    },
+
+    async fetchEvents(category, city) {
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/geteventscategory/" +
+            category +
+            "/" +
+            city +
+            "/"
+        );
+        return response.data;
+      } catch (a) {
+        alert("Ошибка");
+      }
+    },
+    
   },
   async mounted() {
-    this.dataLibrary = await this.fetchData("libraries");
-    this.dataCinema = await this.fetchData("cinema");
-    this.dataCircuses = await this.fetchData("circuses");
-    this.dataConcert = await this.fetchData("concert_halls");
-    this.dataMuseums = await this.fetchData("museums");
-    this.dataParks = await this.fetchData("parks");
-    this.dataTheaters = await this.fetchData("theaters");
+    //Переделать
+    //await this.getLocation();
+    this.city = await this.postCity(this.centerLat, this.centerLon);
+    this.dataLibrary = await this.fetchData("libraries", this.city);
+    this.dataCinema = await this.fetchData("cinema", this.city);
+    this.dataCircuses = await this.fetchData("circuses", this.city);
+    this.dataConcert = await this.fetchData("concert_halls", this.city);
+    this.dataMuseums = await this.fetchData("museums", this.city);
+    this.dataParks = await this.fetchData("parks", this.city);
+    this.dataTheaters = await this.fetchData("theaters", this.city);
     this.dataСulturePalacesClubs = await this.fetchData(
-      "culture_palaces_clubs"
+      "culture_palaces_clubs",
+      this.city
     );
-    this.testEvent = await this.testEvents();
-    console.log(this.testEvent.filter(data => data.data.general.places[0].id == 8201))
+    this.eventsLibrary = await this.fetchEvents("libraries", this.city);
+    this.eventsCinema = await this.fetchEvents("cinema", this.city);
+    this.eventsCircuses = await this.fetchEvents("circuses", this.city);
+    this.eventsConcert = await this.fetchEvents("concert_halls", this.city);
+    this.eventsMuseums = await this.fetchEvents("museums", this.city);
+    this.eventsParks = await this.fetchEvents("parks", this.city);
+    this.eventsTheaters = await this.fetchEvents("theaters", this.city);
+    this.eventsСulturePalacesClubs = await this.fetchEvents(
+      "culture_palaces_clubs",
+      this.city
+    );
+
+    //this.events = await this.testEvents();
+
+    //console.log(this.testEvent.filter(data => data.data.general.places[0].id == 8201))
   },
 };
 </script>
@@ -331,6 +564,15 @@ export default {
   z-index: 900;
   top: 0px;
   left: 60px;
+  margin: 10px;
+}
+.filter_developments {
+  position: fixed;
+  top: 200vw;
+  background-color: #fff;
+  z-index: 900;
+  top: 0px;
+  left: 300px;
   margin: 10px;
 }
 
