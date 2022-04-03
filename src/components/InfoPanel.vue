@@ -1,6 +1,6 @@
 <template>
   <div>
-    <aside class="object" v-bind:class="{ object_closed: !flag }">
+    <aside class="object" v-bind:class="{ object_closed: !info.flag }">
       <button
         v-for="tab in tabs"
         v-bind:key="tab"
@@ -14,22 +14,23 @@
 
       <button class="object__close" @click="closeAside"></button>
       <div v-if="bool">
-        <h2>{{ nameinfo }}</h2>
-        <div v-html="description"></div>
+        <h2>{{ info.name }}</h2>
+        <div v-html="info.description"></div>
         <div class="object__img">
-          <img :src="img" alt="" class="img-absolute" />
+          <img :src="info.img" alt="" class="img-absolute" />
         </div>
         <div>
           <p>Контакты для связи:</p>
-          <p>Email: {{ contacts.email }}</p>
+          <p v-if="info.hasOwnProperty('email')">Email: {{ info.contacts.email }}</p>
           <strong>Дни работы:</strong>
-          <div v-for="(work, index) in workingSchedule" v-bind:key="work">
+          <div v-for="(work, index) in info.workingSchedule" v-bind:key="work">
             {{ daysOfWeek[index] }}: {{ work.from }} - {{ work.to }}
           </div>
         </div>
         <div class="object__descr"></div>
       </div>
       <div v-if="!bool">
+        <h1>{{info.name}}</h1>
         <table cellspacing="0" cellpadding="5" border="1">
           <tr>
             <th>Название мероприятия</th>
@@ -38,7 +39,7 @@
             <th>Платно</th>
             <th></th>
           </tr>
-          <tr v-for="event in selectEvents" v-bind:key="event._id">
+          <tr v-for="event in info.selectEvents" v-bind:key="event._id">
             <td>{{ event.data.general.name }}</td>
             <td>{{ event.data.general.ageRestriction }}</td>
             <td>{{ event.data.general.category.name }}</td>
@@ -91,26 +92,8 @@ export default {
     };
   },
   props: {
-    flag: {
-      type: Boolean,
-    },
-    nameinfo: {
-      type: String,
-    },
-    description: {
-      type: String,
-    },
-    img: {
-      type: String,
-    },
-    contacts: {
-      type: Object,
-    },
-    workingSchedule: {
-      type: Object,
-    },
-    selectEvents: {
-      type: Array,
+    info: {
+      type: Object
     },
   },
   methods: {
