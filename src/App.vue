@@ -2,112 +2,60 @@
   <div id="map">
     <l-map :zoom="zoom" :center="center" @update:center="centerUpdated">
       <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-      <get-markers
-        v-if="selectedCategory.includes('libraries')"
-        :data="dataLibrary"
-        :icon="iconLibrary"
-        :events="eventsLibrary"
+      <div v-for="n in 8" :key="n">
+        <get-markers
+        v-if="selectedCategory.includes(nameCategoryObject[n-1])"
+        :data="data[n-1]"
+        :icon="icons[n-1]"
+        :events="events[n-1]"
         @getInfo="getData"
       />
-      <get-markers
-        v-if="selectedCategory.includes('cinema')"
-        :data="dataCinema"
-        :icon="iconCinema"
-        :events="eventsCinema"
-        @getInfo="getData"
-      />
-      <get-markers
-        v-if="selectedCategory.includes('circuses')"
-        :data="dataCircuses"
-        :icon="iconCircuses"
-        :events="eventsCircuses"
-        @getInfo="getData"
-      />
-      <get-markers
-        v-if="selectedCategory.includes('concert_halls')"
-        :data="dataConcert"
-        :icon="iconConcert"
-        :events="eventsConcert"
-        @getInfo="getData"
-      />
-      <get-markers
-        v-if="selectedCategory.includes('museums')"
-        :data="dataMuseums"
-        :icon="iconMuseums"
-        :events="eventsMuseums"
-        @getInfo="getData"
-      />
-      <get-markers
-        v-if="selectedCategory.includes('parks')"
-        :data="dataParks"
-        :icon="iconParks"
-        :events="eventsParks"
-        @getInfo="getData"
-      />
-      <get-markers
-        v-if="selectedCategory.includes('theaters')"
-        :data="dataTheaters"
-        :icon="iconTheaters"
-        :events="eventsTheaters"
-        @getInfo="getData"
-      />
-      <get-markers
-        v-if="selectedCategory.includes('culture_palaces_clubs')"
-        :data="dataСulturePalacesClubs"
-        :icon="iconСulturePalacesClubs"
-        :events="eventsСulturePalacesClubs"
-        @getInfo="getData"
-      />
+      </div>
     </l-map>
     <info-panel
-      :flag="flag"
-      :nameinfo="name"
-      :description="description"
-      :img="img"
-      :contacts="contacts"
-      :workingSchedule="workingSchedule"
-      :selectEvents="selectEvents"
+      :info = info
       @closeAside="closeAside"
     />
+    
     <form class="filter">
-      <div>
-        <fieldset>
-          <legend>Фильтры объектов</legend>
-          <select
-            class="form-select form-select-lg mb-3"
-            aria-label=".form-select-lg example"
-            v-model="selectRadius"
-          >
-            <option value="500">500 метров</option>
-            <option value="100">1000 метров</option>
-            <option value="1500">1500 метров</option>
-            <option value="3000">3000 метров</option>
-            <option value="100000">Весь город</option>
-          </select>
-          <div class="v-options"></div>
-          <br />
-          <select
-            class="form-select"
-            multiple
-            aria-label="multiple select example"
-            v-model="selectCategory"
-          >
-            <option value="libraries">Библиотеки</option>
-            <option value="culture_palaces_clubs">ДК и клубы</option>
-            <option value="cinema">Кинотеатры</option>
-            <option value="circuses">Цирки</option>
-            <option value="concert_halls">Концертные залы</option>
-            <option value="museums">Музеи</option>
-            <option value="parks">Парки</option>
-            <option value="theaters">Театры</option>
-          </select>
-          <br />
-          <button @click="ClickData" type="button" class="btn btn-outline-dark">
-            Применить
-          </button>
-        </fieldset>
-      </div>
-    </form>
+    <div>
+      <fieldset>
+        <legend>Фильтры объектов</legend>
+        <select
+          class="form-select form-select-lg mb-3"
+          aria-label=".form-select-lg example"
+          v-model="selectRadius"
+        >
+          <option value="500">500 метров</option>
+          <option value="100">1000 метров</option>
+          <option value="1500">1500 метров</option>
+          <option value="3000">3000 метров</option>
+          <option value="100000">Весь город</option>
+        </select>
+        <div class="v-options"></div>
+        <br />
+        <select
+          class="form-select"
+          multiple
+          aria-label="multiple select example"
+          v-model="selectCategory"
+        >
+          <option value="libraries">Библиотеки</option>
+          <option value="culture_palaces_clubs">ДК и клубы</option>
+          <option value="cinema">Кинотеатры</option>
+          <option value="circuses">Цирки</option>
+          <option value="concert_halls">Концертные залы</option>
+          <option value="museums">Музеи</option>
+          <option value="parks">Парки</option>
+          <option value="theaters">Театры</option>
+        </select>
+        <br />
+        <button @click="ClickData" type="button" class="btn btn-outline-dark">
+          Применить
+        </button>
+      </fieldset>
+    </div>
+  </form>
 
     <form class="filter_developments">
       <div>
@@ -139,7 +87,7 @@
           <button
             type="button"
             class="btn btn-outline-dark"
-            @click="ClickEventsData"
+            @click="filterEvents"
           >
             Применить
           </button>
@@ -198,9 +146,6 @@ export default {
         "Кино",
         "Экскурсии",
       ],
-      contacts: [],
-      selectEvents: [],
-      workingSchedule: [],
       selectRadius: 100000,
       selectCategory: [
         "libraries",
@@ -223,23 +168,8 @@ export default {
         "theaters",
       ],
       city: "",
-      dataLibrary: [],
-      dataCinema: [],
-      dataCircuses: [],
-      dataConcert: [],
-      dataMuseums: [],
-      dataParks: [],
-      dataTheaters: [],
-      dataСulturePalacesClubs: [],
-      eventsLibrary: [],
-      eventsCinema: [],
-      eventsCircuses: [],
-      eventsConcert: [],
-      eventsMuseums: [],
-      eventsParks: [],
-      eventsTheaters: [],
-      eventsСulturePalacesClubs: [],
-      dadadadadad: [],
+      data: [[], [], [], [], [], [], [], []],
+      events: [[], [], [], [], [], [], [], []],
       centerLat: 48.77834045,
       centerLon: 44.77727568,
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -248,56 +178,74 @@ export default {
       zoom: 9,
       center: [55.5807, 37.3656],
       markerLatLng: [51.504, -0.159],
-      flag: false,
+      info: 
+        {
+        flag: false,
+        name: "",
+        description: "",
+        img: "",
+        contacts: [],
+        workingSchedule: [],
+        selectEvents: []
+        },
 
-      name: "",
-      description: "",
-      img: "",
-      events: [],
-
-      iconLibrary: icon({
+      filter: [],
+      icons: [
+        icon({
         iconUrl: "/icons/book.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
-      iconCinema: icon({
+      icon({
         iconUrl: "/icons/cinema.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
-      iconCircuses: icon({
+      icon({
         iconUrl: "/icons/circuses.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
-      iconConcert: icon({
+      icon({
         iconUrl: "/icons/concert.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
-      iconMuseums: icon({
+      icon({
         iconUrl: "/icons/museum.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
-      iconParks: icon({
+      icon({
         iconUrl: "/icons/parks.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
-      iconTheaters: icon({
+      icon({
         iconUrl: "/icons/theaters.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
-      iconСulturePalacesClubs: icon({
+      icon({
         iconUrl: "/icons/culturepalacesclubs.png",
         iconSize: [32, 37],
         iconAnchor: [16, 37],
-      }),
+      })
+      ],
+      nameCategoryObject: ["libraries", "cinema", "circuses", "concert_halls", "museums", "parks", "theaters", "culture_palaces_clubs"]
     };
   },
   methods: {
+    filterEvents() {
+      for (let i = 0; i < this.selectCategoryEvents.length; i++)
+      {
+        this.filter.push( this.eventsСulturePalacesClubs.filter(data => data.data.general.category.name == this.selectCategoryEvents[i]));
+        
+
+      }
+      console.log(this.filter);
+    },
+
     async fetchFilterEvents(category) {
       try {
         const response = await axios.post(
@@ -319,43 +267,21 @@ export default {
     },
 
     async ClickEventsData() {
-      this.eventsLibrary = await this.fetchFilterEvents(
-        "libraries"
-      );
-      this.eventsCinema = await this.fetchFilterEvents(
-        "cinema"
-      );
-      this.eventsCircuses = await this.fetchFilterEvents(
-        "circuses"
-      );
-      this.eventsConcert = await this.fetchFilterEvents(
-        "concert_halls"
-      );
-      this.eventsMuseums = await this.fetchFilterEvents(
-        "museums"
-      );
-      this.eventsParks = await this.fetchFilterEvents(
-        "parks"
-      );
-      this.eventsTheaters = await this.fetchFilterEvents(
-        "theaters"
-      );
-      this.eventsСulturePalacesClubs = await this.fetchFilterEvents(
-        "culture_palaces_clubs"
-      );
-      alert("ОК")
+      for(let i = 0; i < 8; i++)
+      {
+        this.events[i] = await this.fetchFilterEvents(this.nameCategoryObject[i]);
+      }
     },
 
 
-    //Очень плохо реальзованный фильтр, но рабочий)
-    async getRadiusData(category, lat, long, radius) {
+    async getRadiusData(category) {
       try {
         const response = await axios.post(
           "http://127.0.0.1:8000/api/categoryget/" + category + "/" + this.city + "/",
           {
-            lat: lat,
-            long: long,
-            radius: radius,
+            lat: this.centerLat,
+            long: this.centerLon,
+            radius: this.selectRadius,
           }
         );
         return response.data;
@@ -365,54 +291,10 @@ export default {
     },
     async ClickData() {
       this.selectedCategory = this.selectCategory;
-      this.dataLibrary = await this.getRadiusData(
-        "libraries",
-        this.centerLat,
-        this.centerLon,
-        this.selectRadius
-      );
-      this.dataCinema = await this.getRadiusData(
-        "cinema",
-        this.centerLat,
-        this.centerLon,
-        this.selectRadius
-      );
-      this.dataCircuses = await this.getRadiusData(
-        "circuses",
-        this.centerLat,
-        this.centerLon,
-        this.selectRadius
-      );
-      this.dataConcert = await this.getRadiusData(
-        "concert_halls",
-        this.centerLat,
-        this.centerLon,
-        this.selectRadius
-      );
-      this.dataMuseums = await this.getRadiusData(
-        "museums",
-        this.centerLat,
-        this.centerLon,
-        this.selectRadius
-      );
-      this.dataParks = await this.getRadiusData(
-        "parks",
-        this.centerLat,
-        this.centerLon,
-        this.selectRadius
-      );
-      this.dataTheaters = await this.getRadiusData(
-        "theaters",
-        this.centerLat,
-        this.centerLon,
-        this.selectRadius
-      );
-      this.dataСulturePalacesClubs = await this.getRadiusData(
-        "culture_palaces_clubs",
-        this.centerLat,
-        this.centerLon,
-        this.selectRadius
-      );
+      for(let i = 0; i<8; i++)
+      {
+        this.data[i] = await this.getRadiusData(this.nameCategoryObject[i]);
+      }
     },
     /*async testEvents() {
       try {
@@ -425,10 +307,10 @@ export default {
       }
     },*/
 
-    async fetchData(category, city) {
+    async fetchData(category) {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:8000/api/categoryget/" + category + "/" + city + "/"
+          "http://127.0.0.1:8000/api/categoryget/" + category + "/" + this.city + "/"
         );
         return response.data;
       } catch (a) {
@@ -437,20 +319,20 @@ export default {
     },
     getData(data, flag) {
       try {
-        this.flag = flag;
-        this.name = data.name;
-        this.description = data.description;
-        this.img = data.img;
-        this.contacts = data.contacts;
-        this.workingSchedule = data.workingSchedule;
-        this.selectEvents = data.filterEvents;
+        this.info.flag = flag;
+        this.info.name = data.name;
+        this.info.description = data.description;
+        this.info.img = data.img;
+        this.info.contacts = data.contacts;
+        this.info.workingSchedule = data.workingSchedule;
+        this.info.selectEvents = data.filterEvents;
       } catch {
         alert("ошибка");
       }
     },
 
     closeAside(flag) {
-      this.flag = flag;
+      this.info.flag = flag;
     },
 
     async getLocation() {
@@ -491,13 +373,13 @@ export default {
       }
     },
 
-    async fetchEvents(category, city) {
+    async fetchEvents(category) {
       try {
         const response = await axios.get(
           "http://127.0.0.1:8000/api/geteventscategory/" +
             category +
             "/" +
-            city +
+            this.city +
             "/"
         );
         return response.data;
@@ -511,28 +393,15 @@ export default {
     //Переделать
     //await this.getLocation();
     this.city = await this.postCity(this.centerLat, this.centerLon);
-    this.dataLibrary = await this.fetchData("libraries", this.city);
-    this.dataCinema = await this.fetchData("cinema", this.city);
-    this.dataCircuses = await this.fetchData("circuses", this.city);
-    this.dataConcert = await this.fetchData("concert_halls", this.city);
-    this.dataMuseums = await this.fetchData("museums", this.city);
-    this.dataParks = await this.fetchData("parks", this.city);
-    this.dataTheaters = await this.fetchData("theaters", this.city);
-    this.dataСulturePalacesClubs = await this.fetchData(
-      "culture_palaces_clubs",
-      this.city
-    );
-    this.eventsLibrary = await this.fetchEvents("libraries", this.city);
-    this.eventsCinema = await this.fetchEvents("cinema", this.city);
-    this.eventsCircuses = await this.fetchEvents("circuses", this.city);
-    this.eventsConcert = await this.fetchEvents("concert_halls", this.city);
-    this.eventsMuseums = await this.fetchEvents("museums", this.city);
-    this.eventsParks = await this.fetchEvents("parks", this.city);
-    this.eventsTheaters = await this.fetchEvents("theaters", this.city);
-    this.eventsСulturePalacesClubs = await this.fetchEvents(
-      "culture_palaces_clubs",
-      this.city
-    );
+    for(let i = 0; i<8; i++)
+    {
+      this.data[i] = await this.fetchData(this.nameCategoryObject[i]);
+    }
+    for(let i = 0; i<8; i++)
+    {
+      this.events[i] = await this.fetchEvents(this.nameCategoryObject[i]);
+    }
+    alert('Events');
 
     //this.events = await this.testEvents();
 
@@ -557,15 +426,7 @@ export default {
   width: 100vw;
   height: 100vh;
 }
-.filter {
-  position: fixed;
-  top: 100vw;
-  background-color: #fff;
-  z-index: 900;
-  top: 0px;
-  left: 60px;
-  margin: 10px;
-}
+
 .filter_developments {
   position: fixed;
   top: 200vw;
@@ -573,6 +434,15 @@ export default {
   z-index: 900;
   top: 0px;
   left: 300px;
+  margin: 10px;
+}
+.filter {
+  position: fixed;
+  top: 100vw;
+  background-color: #fff;
+  z-index: 900;
+  top: 0px;
+  left: 60px;
   margin: 10px;
 }
 
