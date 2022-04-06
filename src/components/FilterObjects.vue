@@ -3,10 +3,7 @@
     <div>
       <fieldset>
         <legend>Фильтры объектов</legend>
-        <select
-
-          v-model="selectRadius"
-        >
+        <select v-model="selectRadius">
           <option value="500">500 метров</option>
           <option value="1000">1000 метров</option>
           <option value="1500">1500 метров</option>
@@ -31,7 +28,11 @@
           <option value="theaters">Театры</option>
         </select>
         <br />
-        <button @click="filterObject" type="button" class="btn btn-outline-dark">
+        <button
+          @click="filterObject"
+          type="button"
+          class="btn btn-outline-dark"
+        >
           Применить
         </button>
       </fieldset>
@@ -55,22 +56,22 @@ export default {
         "parks",
         "theaters",
       ],
-    }
+    };
   },
   methods: {
     filterObject() {
-      this.$emit('filterObject', this.selectCategory, this.selectRadius);
-    }
-  }
+      this.$emit("filterObject", this.selectCategory, this.selectRadius);
+    },
+  },
 };
 </script>
 
 <style scoped>
 .filter {
-  position: fixed;
-  top: 100vw;
+
+
   background-color: #fff;
-  z-index: 900;
+  z-index: 1000;
   top: 0px;
   left: 60px;
   margin: 10px;

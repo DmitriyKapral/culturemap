@@ -7,7 +7,7 @@
       ]"
       :icon="icon"
       @click="getInfo(item)"
-      ></l-marker>
+    ></l-marker>
   </div>
 </template>
 
@@ -26,25 +26,24 @@ export default {
       required: true,
     },
     icon: {
-      type: Object
+      type: Object,
     },
     events: {
-      type: Array
-    }
+      type: Array,
+    },
   },
   data() {
     return {
       flag: false,
       info: {
-        name: '',
-        description: '',
-        img: '',
+        name: "",
+        description: "",
+        img: "",
         contacts: [],
         workingSchedule: [],
         filterEvents: [],
-      }
-    }
-
+      },
+    };
   },
   methods: {
     getInfo(item) {
@@ -54,11 +53,12 @@ export default {
       this.info.img = item.data.general.image.url;
       this.info.contacts = item.data.general.contacts;
       this.info.workingSchedule = item.data.general.workingSchedule;
-      this.info.filterEvents = this.events.filter(event => event.data.general.places[0].id == item.data.general.id);
-      this.$emit('getInfo', this.info, this.flag);
-    }
-  }
-  
+      this.info.filterEvents = this.events.filter(
+        (event) => event.data.general.places[0].id == item.data.general.id
+      );
+      this.$emit("getInfo", this.info, this.flag);
+    },
+  },
 };
 </script>
 

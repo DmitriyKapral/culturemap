@@ -33,7 +33,7 @@
         >
           Применить
         </button>
-        <button type="button" class="btn btn-outline-dark">
+        <button type="button" class="btn btn-outline-dark" @click="allEvents">
           Показать список и применить
         </button>
       </fieldset>
@@ -43,7 +43,7 @@
 
 <script>
 export default {
-  emits: ["filterEvents"],
+  emits: ["filterEvents", "allEvents"],
   data() {
     return {
       categoryEvents: [
@@ -78,10 +78,18 @@ export default {
     };
   },
   methods: {
-      filterEvents() {
-          this.$emit('filterEvents', this.selectCategoryEvents, this.selectedFree, this.inputAge);
-      }
-  }
+    filterEvents() {
+      this.$emit(
+        "filterEvents",
+        this.selectCategoryEvents,
+        this.selectedFree,
+        this.inputAge
+      );
+    },
+    allEvents() {
+      this.$emit("allEvents");
+    }
+  },
 };
 </script>
 

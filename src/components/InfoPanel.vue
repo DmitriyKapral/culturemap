@@ -21,7 +21,9 @@
         </div>
         <div>
           <p>Контакты для связи:</p>
-          <p v-if="info.hasOwnProperty('email')">Email: {{ info.contacts.email }}</p>
+          <p v-if="info.hasOwnProperty('email')">
+            Email: {{ info.contacts.email }}
+          </p>
           <strong>Дни работы:</strong>
           <div v-for="(work, index) in info.workingSchedule" v-bind:key="work">
             {{ daysOfWeek[index] }}: {{ work.from }} - {{ work.to }}
@@ -30,13 +32,13 @@
         <div class="object__descr"></div>
       </div>
       <div v-if="!bool">
-        <h1>{{info.name}}</h1>
+        <h1>{{ info.name }}</h1>
         <table cellspacing="0" cellpadding="5" border="1">
           <tr>
             <th>Название мероприятия</th>
             <th>Возврастное ограничение</th>
             <th>Категория</th>
-            <th>Платно</th>
+            <th>Бесплатный вход</th>
             <th></th>
           </tr>
           <tr v-for="event in info.selectEvents" v-bind:key="event._id">
@@ -44,7 +46,11 @@
             <td>{{ event.data.general.ageRestriction }}</td>
             <td>{{ event.data.general.category.name }}</td>
             <td>{{ trueFalse(event.data.general.isFree) }}</td>
-            <td><button @click="openAsideMore(event.data.general)">Подробнее</button></td>
+            <td>
+              <button @click="openAsideMore(event.data.general)">
+                Подробнее
+              </button>
+            </td>
           </tr>
         </table>
       </div>
@@ -57,10 +63,12 @@
         <div v-if="moreEvent.hasOwnProperty('image')" class="object__img">
           <img :src="moreEvent.image.url" alt="" class="img-absolute" />
         </div>
-        <div v-if="moreEvent.price"><strong>Стоимость входа: </strong>{{ moreEvent.price }}</div>
-        <div>Сеансы: </div>
+        <div v-if="moreEvent.price">
+          <strong>Стоимость входа: </strong>{{ moreEvent.price }}
+        </div>
+        <div>Сеансы:</div>
         <div v-for="seance in moreEvent.seances" v-bind:key="seance">
-          {{ seance.start }} - {{ seance.end }}
+          {{new Date(seance.start).toLocaleString() }} - {{new Date(seance.end).toLocaleString()  }}
         </div>
       </aside>
     </div>
@@ -93,7 +101,7 @@ export default {
   },
   props: {
     info: {
-      type: Object
+      type: Object,
     },
   },
   methods: {
@@ -117,9 +125,9 @@ export default {
     },
     trueFalse(Free) {
       if (!Free) {
-        return "Платное";
+        return "Нет";
       } else {
-        return "Бесплатно";
+        return "Да";
       }
     },
   },

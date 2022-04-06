@@ -1,6 +1,7 @@
 <template>
   <div id="map">
-    <l-map :zoom="zoom" :center="center" @update:center="centerUpdated">
+    <l-map :zoom="zoom" :center="center" @update:center="centerUpdated"
+    @update:zoom="zoomUpdated">
       <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
       <div v-for="n in 8" :key="n">
         <get-markers
@@ -13,8 +14,20 @@
       </div>
     </l-map>
     <info-panel :info="info" @closeAside="closeAside" />
-    <filter-objects @filterObject="filterObject" />
-    <filter-events @filterEvents="filterEvents" />
+    <events-panel
+      :events="events"
+      @moveToMarker="moveToMarker"
+      v-model:show="panelVisible"
+    />
+    <div class="b1">
+      <button type="button"  @click="showFilter">Нажать</button>
+   </div>
+    <my-filter v-model:show="filterObjectVisible">
+      <filter-objects @filterObject="filterObject" />
+    </my-filter>
+    
+    <filter-events @filterEvents="filterEvents" 
+    @allEvents="allEvents"/>
   </div>
 </template>
 
@@ -28,6 +41,8 @@ import GetMarkers from "./components/GetMarkers.vue";
 import InfoPanel from "./components/InfoPanel.vue";
 import FilterObjects from "./components/FilterObjects.vue";
 import FilterEvents from "./components/FilterEvents.vue";
+import MyFilter from './components/UI/MyFilter.vue';
+import EventsPanel from './components/EventsPanel.vue';
 
 export default {
   name: "App",
@@ -38,9 +53,13 @@ export default {
     InfoPanel,
     FilterObjects,
     FilterEvents,
+    MyFilter,
+    EventsPanel,
   },
   data() {
     return {
+      panelVisible: false,
+      filterObjectVisible: false,
       selectCategoryEvents: [],
       selectedFree: 0,
       inputAge: 0,
@@ -56,6 +75,7 @@ export default {
       ],
       city: "",
       data: [[], [], [], [], [], [], [], []],
+      parsingEvents: [],
       events: [[], [], [], [], [], [], [], []],
       filterEvent: [],
       centerLat: 48.77834045,
@@ -63,7 +83,7 @@ export default {
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      zoom: 9,
+      zoom: 11,
       center: [55.5807, 37.3656],
       markerLatLng: [51.504, -0.159],
       info: {
@@ -129,14 +149,12 @@ export default {
         "theaters",
         "culture_palaces_clubs",
       ],
+      categoryObject: ['Библиотеки', 'Кинотеатры', 'Цирки', 'Концертные залы', 'Музеи и галереи', 'Парки', 'Театры', 'Дворцы культуры и клубы'],
     };
   },
   methods: {
-    async filterEvents(selectCategoryEvents, selectedFree, inputAge) {
-      this.selectCategoryEvents = selectCategoryEvents;
-      this.selectedFree = selectedFree;
-      this.inputAge = inputAge;
-      await this.loadingEvents();
+    filterEvents(selectCategoryEvents, selectedFree, inputAge) {
+      this.loadingEvents();
       for (let i = 0; i < 8; i++) {
         this.events[i] = this.events[i]
           .filter((item) =>
@@ -150,35 +168,20 @@ export default {
         }
       }
     },
-
-    async fetchFilterEvents(category) {
-      try {
-        const response = await axios.post(
-          "http://127.0.0.1:8000/api/geteventscategory/" +
-            category +
-            "/" +
-            this.city +
-            "/",
-          {
-            category: this.selectCategoryEvents,
-            ageRestriction: this.inputAge,
-            isFree: this.selectedFree,
-          }
-        );
-        return response.data;
-      } catch (a) {
-        alert("Ошибка");
-      }
+    moveToMarker(coordinates) {
+      console.log(coordinates)
+      this.zoomUpdated(19);
+      setTimeout(this.centerUpdated, 200, [coordinates[0], coordinates[1]]);
+      //this.centerUpdated([coordinates[0], coordinates[1]]);
+      
+      this.panelVisible = false;
     },
-
-    async ClickEventsData() {
-      for (let i = 0; i < 8; i++) {
-        this.events[i] = await this.fetchFilterEvents(
-          this.nameCategoryObject[i]
-        );
-      }
+    zoomUpdated (zoom) {
+      this.zoom = zoom;
     },
-
+    allEvents() {
+      this.panelVisible = true;
+    },
     async getRadiusData(category) {
       try {
         const response = await axios.post(
@@ -200,11 +203,13 @@ export default {
     },
 
     async filterObject(selectCategory, selectRadius) {
+      this.filterObjectVisible = false;
       this.selectedCategory = selectCategory;
       this.selectRadius = selectRadius;
       for (let i = 0; i < 8; i++) {
         this.data[i] = await this.getRadiusData(this.nameCategoryObject[i]);
       }
+      
     },
 
     async fetchData(category) {
@@ -239,13 +244,20 @@ export default {
       this.info.flag = flag;
     },
 
-    async getLocation() {
-      if (navigator.geolocation) {
+    showFilter() {
+      this.filterObjectVisible = true;
+    },
+
+    getLocation() {
+
         navigator.geolocation.getCurrentPosition(
           (position) => {
             this.centerLat = position.coords.latitude;
             this.centerLon = position.coords.longitude;
-            this.centerUpdated([this.centerLat, this.centerLon]);
+            
+            this.center = [this.centerLat, this.centerLon]
+            setTimeout(this.centerUpdated, 1000, [this.centerLat, this.centerLon]);
+            
             console.log(position.coords.latitude);
             console.log(position.coords.longitude);
           },
@@ -253,9 +265,6 @@ export default {
             console.log(error.message);
           }
         );
-      } else {
-        alert("Разрешите доступ к данным местоположения");
-      }
     },
 
     centerUpdated(center) {
@@ -277,12 +286,10 @@ export default {
       }
     },
 
-    async fetchEvents(category) {
+    async fetchEvents() {
       try {
         const response = await axios.get(
           "http://127.0.0.1:8000/api/geteventscategory/" +
-            category +
-            "/" +
             this.city +
             "/"
         );
@@ -291,21 +298,23 @@ export default {
         alert("Ошибка");
       }
     },
-    async loadingEvents() {
+    loadingEvents() {
       for (let i = 0; i < 8; i++) {
-        this.events[i] = await this.fetchEvents(this.nameCategoryObject[i]);
+        this.events[i] = this.parsingEvents.filter(x =>x.data.general.places[0].category.name == this.categoryObject[i]);
       }
     },
   },
   async mounted() {
-    //await this.getLocation();
+    this.getLocation();
+    
     this.city = await this.postCity(this.centerLat, this.centerLon);
     //Загрузка объектов
     for (let i = 0; i < 8; i++) {
       this.data[i] = await this.fetchData(this.nameCategoryObject[i]);
     }
     //Загрузка событий
-    await this.loadingEvents();
+    this.parsingEvents = await this.fetchEvents();
+    this.loadingEvents();
     alert("Events");
   },
 };
@@ -326,6 +335,13 @@ export default {
   left: 0;
   width: 100vw;
   height: 100vh;
+}
+.b1 {
+  z-index: 900;
+  position: fixed;
+  top: 0px;
+  left: 100px;
+  margin: 10px;
 }
 
 * {
