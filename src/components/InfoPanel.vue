@@ -9,10 +9,10 @@
       >
         {{ tab }}
       </button>
-
       <component v-bind:is="currentTabComponent" class="tab"></component>
 
       <button class="object__close" @click="closeAside"></button>
+      
       <div v-if="bool">
         <h2>{{ info.name }}</h2>
         <div v-html="info.description"></div>
@@ -68,7 +68,8 @@
         </div>
         <div>Сеансы:</div>
         <div v-for="seance in moreEvent.seances" v-bind:key="seance">
-          {{new Date(seance.start).toLocaleString() }} - {{new Date(seance.end).toLocaleString()  }}
+          {{ new Date(seance.start).toLocaleString() }} -
+          {{ new Date(seance.end).toLocaleString() }}
         </div>
       </aside>
     </div>
@@ -76,7 +77,9 @@
 </template>
 
 <script>
+import ApexChart from './ApexChart.vue';
 export default {
+  components: { ApexChart },
   emits: ["closeAside"],
   data() {
     return {

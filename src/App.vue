@@ -26,8 +26,14 @@
       <filter-objects @filterObject="filterObject" />
     </my-filter>
     
+    <div class="b2">
+      <button type="button"  @click="showAnalysis">Нажать</button>
+   </div>
     <filter-events @filterEvents="filterEvents" 
     @allEvents="allEvents"/>
+
+    <analysis-panel :city="city"
+    v-model:show="analysisPanelVisible"/>
   </div>
 </template>
 
@@ -43,6 +49,7 @@ import FilterObjects from "./components/FilterObjects.vue";
 import FilterEvents from "./components/FilterEvents.vue";
 import MyFilter from './components/UI/MyFilter.vue';
 import EventsPanel from './components/EventsPanel.vue';
+import AnalysisPanel from './components/AnalysisPanel.vue'
 
 export default {
   name: "App",
@@ -55,9 +62,11 @@ export default {
     FilterEvents,
     MyFilter,
     EventsPanel,
+    AnalysisPanel,
   },
   data() {
     return {
+      analysisPanelVisible: false,
       panelVisible: false,
       filterObjectVisible: false,
       selectCategoryEvents: [],
@@ -160,7 +169,7 @@ export default {
           .filter((item) =>
             selectCategoryEvents.includes(item.data.general.category.name)
           )
-          .filter((age) => age.data.general.ageRestriction == inputAge);
+          .filter((age) => age.data.general.ageRestriction >= inputAge);
         if (selectedFree < 2) {
           this.events[i] = this.events[i].filter(
             (item) => item.data.general.isFree == Boolean(selectedFree)
@@ -235,6 +244,7 @@ export default {
         this.info.contacts = data.contacts;
         this.info.workingSchedule = data.workingSchedule;
         this.info.selectEvents = data.filterEvents;
+        this.panelVisible = false;
       } catch {
         alert("ошибка");
       }
@@ -247,6 +257,9 @@ export default {
     showFilter() {
       this.filterObjectVisible = true;
     },
+    showAnalysis() {
+      this.analysisPanelVisible = true;
+    },
 
     getLocation() {
 
@@ -257,9 +270,6 @@ export default {
             
             this.center = [this.centerLat, this.centerLon]
             setTimeout(this.centerUpdated, 1000, [this.centerLat, this.centerLon]);
-            
-            console.log(position.coords.latitude);
-            console.log(position.coords.longitude);
           },
           (error) => {
             console.log(error.message);
@@ -298,6 +308,7 @@ export default {
         alert("Ошибка");
       }
     },
+
     loadingEvents() {
       for (let i = 0; i < 8; i++) {
         this.events[i] = this.parsingEvents.filter(x =>x.data.general.places[0].category.name == this.categoryObject[i]);
@@ -315,7 +326,7 @@ export default {
     //Загрузка событий
     this.parsingEvents = await this.fetchEvents();
     this.loadingEvents();
-    alert("Events");
+    //alert("Events");
   },
 };
 </script>
@@ -343,9 +354,70 @@ export default {
   left: 100px;
   margin: 10px;
 }
+.b2 {
+  z-index: 900;
+  position: fixed;
+  top: 0px;
+  left: 800px;
+  margin: 10px;
+}
 
 * {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
+}
+.object {
+  position: fixed;
+  width: 40%;
+  top: 0;
+  left: 0%;
+  bottom: 0;
+  background-color: #fff;
+  z-index: 1000;
+  padding: 50px 30px;
+  -webkit-transition: 0.6s;
+  -o-transition: 0.6s;
+  transition: 0.6s;
+  overflow-y: auto;
+  text-align: left;
+}
+.object_closed {
+  left: -40%;
+}
+.object__close {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background-color: black;
+  border: 0;
+  width: 30px;
+  height: 3px;
+  -webkit-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+  cursor: pointer;
+}
+.object__close::after {
+  content: "";
+  display: block;
+  width: 30px;
+  height: 3px;
+  background-color: black;
+  -webkit-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.object__title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+.object__img {
+  position: relative;
+  padding-bottom: 65%;
+  margin-bottom: 25px;
 }
 </style>

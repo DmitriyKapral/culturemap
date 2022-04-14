@@ -2,14 +2,14 @@
   <form class="filter_developments">
     <div>
       <fieldset>
-        <legend>Фильтры объектов</legend>
+        <legend>Фильтры событий</legend>
         <select
           class="form-select"
           multiple
           aria-label="multiple select example"
           v-model="selectCategoryEvents"
         >
-          <option v-for="category in categoryEvents" v-bind:key="category">
+          <option v-for="category in categoryEvents" :key="category">
             {{ category }}
           </option>
         </select>
@@ -34,7 +34,7 @@
           Применить
         </button>
         <button type="button" class="btn btn-outline-dark" @click="allEvents">
-          Показать список и применить
+          Показать список
         </button>
       </fieldset>
     </div>
