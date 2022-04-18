@@ -98,7 +98,7 @@ export default {
             data: this.count,
           },
         ];
-        alert("awwd");
+        //alert("awwd");
       } catch (a) {
         alert("Ошибка");
       }

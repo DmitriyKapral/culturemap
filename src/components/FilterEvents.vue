@@ -3,6 +3,12 @@
     <div>
       <fieldset>
         <legend>Фильтры событий</legend>
+        <Multiselect
+        mode="multiple"
+        
+      v-model="value"
+      :options="options"
+    />
         <select
           class="form-select"
           multiple
@@ -42,10 +48,20 @@
 </template>
 
 <script>
+import Multiselect from '@vueform/multiselect'
 export default {
+  components: {
+      Multiselect,
+    },
   emits: ["filterEvents", "allEvents"],
   data() {
     return {
+      value: null,
+        options: [
+          'Batman',
+          'Robin',
+          'Joker',
+        ],
       categoryEvents: [
         "Встречи",
         "Прочие",
@@ -93,13 +109,13 @@ export default {
 };
 </script>
 
-<style scoped>
+<style src="@vueform/multiselect/themes/default.css">
 * {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
 .filter_developments {
-  position: fixed;
+
   top: 200vw;
   background-color: #fff;
   z-index: 900;
@@ -107,4 +123,5 @@ export default {
   left: 300px;
   margin: 10px;
 }
+
 </style>

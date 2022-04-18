@@ -1,18 +1,20 @@
 <template>
   <div>
     <aside class="object" v-bind:class="{ object_closed: !info.flag }">
-      <button
-        v-for="tab in tabs"
-        v-bind:key="tab"
-        v-bind:class="['tab-button', { active: currentTab === tab }]"
-        v-on:click="currentTab = tab"
-      >
-        {{ tab }}
-      </button>
-      <component v-bind:is="currentTabComponent" class="tab"></component>
+      <div class="pos">
+        <button
+          v-for="tab in tabs"
+          v-bind:key="tab"
+          v-bind:class="['tab-button', { active: currentTab === tab }]"
+          v-on:click="currentTab = tab"
+        >
+          {{ tab }}
+        </button>
+        <component v-bind:is="currentTabComponent" class="tab"></component>
+      </div>
 
       <button class="object__close" @click="closeAside"></button>
-      
+
       <div v-if="bool">
         <h2>{{ info.name }}</h2>
         <div v-html="info.description"></div>
@@ -21,13 +23,24 @@
         </div>
         <div>
           <p>Контакты для связи:</p>
-          <p v-if="info.hasOwnProperty('email')">
-            Email: {{ info.contacts.email }}
-          </p>
+          <div v-if="info.contacts?.hasOwnProperty('email')">
+            <p>Email: {{ info.contacts.email }}</p>
+          </div>
+
+          <div v-if="info.contacts?.hasOwnProperty('phones')">
+            Телефоны:
+            <div v-for="phone in info.contacts.phones" :key="phone">
+              +{{ phone.value }}
+            </div>
+          </div>
+          <div v-if="info.contacts?.hasOwnProperty('website')">
+            Website: {{info.contacts.website}}
+          </div>
           <strong>Дни работы:</strong>
           <div v-for="(work, index) in info.workingSchedule" v-bind:key="work">
             {{ daysOfWeek[index] }}: {{ work.from }} - {{ work.to }}
           </div>
+          
         </div>
         <div class="object__descr"></div>
       </div>
@@ -77,9 +90,7 @@
 </template>
 
 <script>
-import ApexChart from './ApexChart.vue';
 export default {
-  components: { ApexChart },
   emits: ["closeAside"],
   data() {
     return {
@@ -204,24 +215,10 @@ export default {
   padding-bottom: 65%;
   margin-bottom: 25px;
 }
-.tab-button {
-  padding: 6px 20px;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
-  border: 1px solid #ccc;
-  cursor: pointer;
-  background: #f0f0f0;
-  margin-bottom: -25px;
-  margin-right: -1px;
-  width: 300px;
-}
-.tab-button:hover {
-  background: #e0e0e0;
-}
-.tab-button.active {
-  background: #e0e0e0;
-}
-.t1 {
-  table-layout: fixed;
+
+.pos {
+  position: absolute;
+  left: 10%;
+  top: 3%;
 }
 </style>

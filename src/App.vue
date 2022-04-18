@@ -1,7 +1,11 @@
 <template>
   <div id="map">
-    <l-map :zoom="zoom" :center="center" @update:center="centerUpdated"
-    @update:zoom="zoomUpdated">
+    <l-map
+      :zoom="zoom"
+      :center="center"
+      @update:center="centerUpdated"
+      @update:zoom="zoomUpdated"
+    >
       <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
       <div v-for="n in 8" :key="n">
         <get-markers
@@ -20,20 +24,31 @@
       v-model:show="panelVisible"
     />
     <div class="b1">
-      <button type="button"  @click="showFilter">Нажать</button>
-   </div>
-    <my-filter v-model:show="filterObjectVisible">
-      <filter-objects @filterObject="filterObject" />
-    </my-filter>
+      <button type="button" @click="showFilter">Фильтры</button>
+    </div>
     
-    <div class="b2">
-      <button type="button"  @click="showAnalysis">Нажать</button>
-   </div>
-    <filter-events @filterEvents="filterEvents" 
-    @allEvents="allEvents"/>
+    <my-filter v-model:show="filterObjectVisible">
+      <div class="pos">
+        <button
+          v-for="tab in tabs"
+          v-bind:key="tab"
+          v-bind:class="['tab-button', { active: currentTab === tab }]"
+          v-on:click="currentTab = tab"
+        >
+          {{ tab }}
+        </button>
+        <component v-bind:is="currentTabComponent" class="tab"></component>
+      </div>
+      <filter-objects @filterObject="filterObject" v-if="!filterVisible"/>
+      <filter-events @filterEvents="filterEvents" @allEvents="allEvents" v-if="filterVisible" />
+    </my-filter>
 
-    <analysis-panel :city="city"
-    v-model:show="analysisPanelVisible"/>
+    <div class="b2">
+      <button type="button" @click="showAnalysis">Нажать</button>
+    </div>
+    
+
+    <analysis-panel :city="city" v-model:show="analysisPanelVisible" />
   </div>
 </template>
 
@@ -47,9 +62,9 @@ import GetMarkers from "./components/GetMarkers.vue";
 import InfoPanel from "./components/InfoPanel.vue";
 import FilterObjects from "./components/FilterObjects.vue";
 import FilterEvents from "./components/FilterEvents.vue";
-import MyFilter from './components/UI/MyFilter.vue';
-import EventsPanel from './components/EventsPanel.vue';
-import AnalysisPanel from './components/AnalysisPanel.vue'
+import MyFilter from "./components/UI/MyFilter.vue";
+import EventsPanel from "./components/EventsPanel.vue";
+import AnalysisPanel from "./components/AnalysisPanel.vue";
 
 export default {
   name: "App",
@@ -66,6 +81,9 @@ export default {
   },
   data() {
     return {
+      filterVisible: false,
+      currentTab: "Фильтр Объектов",
+      tabs: ["Фильтр Объектов", "Фильтр Мероприятий"],
       analysisPanelVisible: false,
       panelVisible: false,
       filterObjectVisible: false,
@@ -158,11 +176,28 @@ export default {
         "theaters",
         "culture_palaces_clubs",
       ],
-      categoryObject: ['Библиотеки', 'Кинотеатры', 'Цирки', 'Концертные залы', 'Музеи и галереи', 'Парки', 'Театры', 'Дворцы культуры и клубы'],
+      categoryObject: [
+        "Библиотеки",
+        "Кинотеатры",
+        "Цирки",
+        "Концертные залы",
+        "Музеи и галереи",
+        "Парки",
+        "Театры",
+        "Дворцы культуры и клубы",
+      ],
     };
   },
   methods: {
+    currentTabComponent() {
+      if (this.currentTab == "Фильтр Объектов") {
+        this.filterVisible = false;
+      } else {
+        this.filterVisible = true;
+      }
+    },
     filterEvents(selectCategoryEvents, selectedFree, inputAge) {
+      this.filterObjectVisible = false;
       this.loadingEvents();
       for (let i = 0; i < 8; i++) {
         this.events[i] = this.events[i]
@@ -178,17 +213,18 @@ export default {
       }
     },
     moveToMarker(coordinates) {
-      console.log(coordinates)
+      console.log(coordinates);
       this.zoomUpdated(19);
       setTimeout(this.centerUpdated, 200, [coordinates[0], coordinates[1]]);
       //this.centerUpdated([coordinates[0], coordinates[1]]);
-      
+
       this.panelVisible = false;
     },
-    zoomUpdated (zoom) {
+    zoomUpdated(zoom) {
       this.zoom = zoom;
     },
     allEvents() {
+      this.filterObjectVisible = false;
       this.panelVisible = true;
     },
     async getRadiusData(category) {
@@ -218,7 +254,6 @@ export default {
       for (let i = 0; i < 8; i++) {
         this.data[i] = await this.getRadiusData(this.nameCategoryObject[i]);
       }
-      
     },
 
     async fetchData(category) {
@@ -262,19 +297,21 @@ export default {
     },
 
     getLocation() {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          this.centerLat = position.coords.latitude;
+          this.centerLon = position.coords.longitude;
 
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            this.centerLat = position.coords.latitude;
-            this.centerLon = position.coords.longitude;
-            
-            this.center = [this.centerLat, this.centerLon]
-            setTimeout(this.centerUpdated, 1000, [this.centerLat, this.centerLon]);
-          },
-          (error) => {
-            console.log(error.message);
-          }
-        );
+          this.center = [this.centerLat, this.centerLon];
+          setTimeout(this.centerUpdated, 1000, [
+            this.centerLat,
+            this.centerLon,
+          ]);
+        },
+        (error) => {
+          console.log(error.message);
+        }
+      );
     },
 
     centerUpdated(center) {
@@ -299,9 +336,7 @@ export default {
     async fetchEvents() {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:8000/api/geteventscategory/" +
-            this.city +
-            "/"
+          "http://127.0.0.1:8000/api/geteventscategory/" + this.city + "/"
         );
         return response.data;
       } catch (a) {
@@ -311,13 +346,16 @@ export default {
 
     loadingEvents() {
       for (let i = 0; i < 8; i++) {
-        this.events[i] = this.parsingEvents.filter(x =>x.data.general.places[0].category.name == this.categoryObject[i]);
+        this.events[i] = this.parsingEvents.filter(
+          (x) =>
+            x.data.general.places[0].category.name == this.categoryObject[i]
+        );
       }
     },
   },
   async mounted() {
     this.getLocation();
-    
+
     this.city = await this.postCity(this.centerLat, this.centerLon);
     //Загрузка объектов
     for (let i = 0; i < 8; i++) {
@@ -419,5 +457,24 @@ export default {
   position: relative;
   padding-bottom: 65%;
   margin-bottom: 25px;
+}
+
+.tab-button:hover {
+  background: #e0e0e0;
+}
+.tab-button.active {
+  background: #e0e0e0;
+}
+.tab-button {
+  padding: 6px 20px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background: #f0f0f0;
+  position: relative;
+  margin-right: -1px;
+  width: 300px;
+  left: 0;
 }
 </style>
