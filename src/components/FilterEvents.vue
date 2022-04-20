@@ -1,69 +1,73 @@
 <template>
   <form class="filter_developments">
     <div>
-      <fieldset>
+      <fieldset @click="closeOut">
         <legend>Фильтры событий</legend>
-        
-        <select
-          class="form-select"
-          multiple
-          aria-label="multiple select example"
-          v-model="selectCategoryEvents"
-        >
-          <option v-for="category in categoryEvents" :key="category">
-            {{ category }}
-          </option>
-        </select>
+        <strong>Выберите категории поиска мероприятий:</strong> <br>
+        <my-select-mult
+          :options="categoryEvents"
+          @select="optionMult"
+          v-model:show="showSelect"
+          @all="closeSelectOut"
+          :selectedOptions="selectCategoryEvents"
+        />
+        <br>
+        <strong>Поиск по платным мероприятиям:</strong> <br>
+        <span class="custom-dropdown big">
+          <select v-model="selectedFree">
+            <option
+              v-for="FreeFalse in freeOrFalse"
+              v-bind:key="FreeFalse"
+              :value="FreeFalse.value"
+            >
+              {{ FreeFalse.text }}
+            </option>
+          </select>
+        </span>
         <br />
-        <select v-model="selectedFree">
-          <option
-            v-for="FreeFalse in freeOrFalse"
-            v-bind:key="FreeFalse"
-            :value="FreeFalse.value"
+        <strong>Выберите ограничение по возврасту: </strong> <br>
+        <div class="number">
+          <button class="number-minus" type="button" @click="minusInput">
+            -
+          </button>
+          <input v-model="inputAge" type="number" min="0" max="18" readonly/>
+          <button
+            class="number-plus"
+            type="button"
+            @click="plusInput"
           >
-            {{ FreeFalse.text }}
-          </option>
-        </select>
+            +
+          </button>
+        </div>
         <br />
-        <input v-model="inputAge" type="number" min="0" max="18" />
-        <br />
-        <button
-          type="button"
-          class="btn btn-outline-dark"
-          @click="filterEvents"
-        >
-          Применить
-        </button>
-        <button type="button" class="btn btn-outline-dark" @click="allEvents">
-          Показать список
-        </button>
+        <btn style="margin: 2%" class="btn" @click="filterEvents">Применить</btn>
+        <btn style="margin: 2%" class="btn" @click="allEvents">Показать список</btn>
       </fieldset>
     </div>
   </form>
 </template>
 
 <script>
-
+import MySelectMult from "./UI/MySelectMult.vue";
+import Btn from "./UI/Btn.vue";
 export default {
+  components: { MySelectMult, Btn },
   emits: ["filterEvents", "allEvents"],
   data() {
     return {
+      showSelect: false,
       value: null,
-        options: [
-          'Batman',
-          'Robin',
-          'Joker',
-        ],
+      options: ["Batman", "Robin", "Joker"],
       categoryEvents: [
-        "Встречи",
-        "Прочие",
-        "Выставки",
-        "Концерты",
-        "Праздники",
-        "Обучение",
-        "Спектакли",
-        "Кино",
-        "Экскурсии",
+        { name: "Встречи", value: "Встречи" },
+        { name: "Прочие", value: "Прочие" },
+        { name: "Выставки", value: "Выставки" },
+        { name: "Концерты", value: "Концерты" },
+        { name: "Праздники", value: "Праздники" },
+        { name: "Обучение", value: "Обучение" },
+        { name: "Спектакли", value: "Спектакли" },
+        { name: "Кино", value: "Кино" },
+        { name: "Экскурсии", value: "Экскурсии" },
       ],
       selectCategoryEvents: [
         "Встречи",
@@ -86,6 +90,21 @@ export default {
     };
   },
   methods: {
+    minusInput() {
+      if(this.inputAge <= 18 && this.inputAge > 0)
+      {
+        this.inputAge -= 1;
+      }
+      
+      
+    },
+    plusInput() {
+      if (this.inputAge >= 0 && this.inputAge < 18)
+      {
+        this.inputAge += 1;
+      }
+      
+    },
     filterEvents() {
       this.$emit(
         "filterEvents",
@@ -96,18 +115,27 @@ export default {
     },
     allEvents() {
       this.$emit("allEvents");
-    }
+    },
+    closeOut() {
+      this.showSelect = false;
+    },
+    closeSelectOut(arr) {
+      this.selectCategoryEvents = arr;
+    },
+    optionMult(arr) {
+      this.selectCategoryEvents = arr;
+      this.showSelect = !this.showSelect;
+    },
   },
 };
 </script>
 
-<style src="@vueform/multiselect/themes/default.css">
+<style>
 * {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
 .filter_developments {
-
   top: 200vw;
   background-color: #fff;
   z-index: 900;
@@ -115,5 +143,60 @@ export default {
   left: 300px;
   margin: 10px;
 }
-
+.number {
+	display: inline-block;
+	position: relative;
+	width: 100px;
+  margin: 2%;
+}
+.number input[type="number"] {
+  cursor:auto;
+	display: block;
+	height: 32px;
+	line-height: 32px;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+	text-align: center;
+	-moz-appearance: textfield;
+	-webkit-appearance: textfield;
+	appearance: textfield;
+}
+.number input[type="number"]::-webkit-outer-spin-button,
+.number input[type="number"]::-webkit-inner-spin-button {
+	display: none;
+}
+.number-minus {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	bottom: 1px;
+	width: 20px;
+	padding: 0;
+	display: block;
+	text-align: center;
+	border: none;
+	border-right: 1px solid teal;
+	font-size: 16px;
+	font-weight: 600;
+  background: teal;
+  cursor: pointer;
+}
+.number-plus {
+	position: absolute;
+	top: 1px;
+	right: 1px;
+	bottom: 1px;
+	width: 20px;
+	padding: 0;
+	display: block;
+	text-align: center;
+	border: none;
+	border-left: 1px solid teal;
+	font-size: 16px;
+	font-weight: 600;
+  background: teal;
+  cursor: pointer;
+}
 </style>

@@ -2,21 +2,21 @@
   <div>
     <aside class="object" v-bind:class="{ object_closed: !show }">
       <button class="object__close" @click="closeAside"></button>
-      <div>
+      <span class="custom-dropdown big">
         <select v-model="selectedCategory">
           <option disabled value="">Выберите один из вариантов</option>
           <option v-for="category in categoryEvents" :key="category">
             {{ category }}
           </option>
         </select>
-        <button @click="getChart">Клик</button>
-        <apexchart
-          width="650"
-          type="bar"
-          :options="chartOptions"
-          :series="series"
-        ></apexchart>
-      </div>
+      </span>
+      <btn class="btn" @click="getChart">Клик</btn>
+      <apexchart
+        width="650"
+        type="bar"
+        :options="chartOptions"
+        :series="series"
+      ></apexchart>
     </aside>
   </div>
 </template>
@@ -24,9 +24,11 @@
 <script>
 import VueApexCharts from "vue3-apexcharts";
 import axios from "axios";
+import Btn from './UI/Btn.vue';
 export default {
   components: {
     apexchart: VueApexCharts,
+    Btn,
   },
   props: {
     show: {

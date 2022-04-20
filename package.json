@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@vueform/multiselect": "^2.3.3",
+    "ant-design-vue": "^3.2.0",
     "apexcharts": "^3.35.0",
     "axios": "^0.26.0",
     "bootstrap": "^5.1.3",

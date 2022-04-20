@@ -5,13 +5,12 @@
     </p>
     <div @click.stop class="options" v-if="show">
       <div v-for="option in options" :key="option.value">
-        <input
-          
+        <input 
+
           type="checkbox"
           :value="option.value"
           v-model="checkedNames"
           :id="option.value"
-          
         />
         <label :for="option.value">{{ option.name }}</label>
       </div>
@@ -26,15 +25,18 @@ export default {
       type: Boolean,
       default: false,
     },
-    selected: {
-      type: String,
-    },
     options: {
       type: Array,
       default() {
         return [];
       },
     },
+    selectedOptions: {
+      type: Array,
+      default() {
+        return [];
+      },
+    }
   },
   data() {
     return {
@@ -52,9 +54,11 @@ export default {
       {
         this.$emit("all", this.checkedNames);
       }
+
     },
   },
   mounted() {
+    this.checkedNames = this.selectedOptions;
     document.addEventListener('click', this.hideSelects.bind(this), true);
     //document.addEventListener('click', this.clickOut.bind(this), true)
   },

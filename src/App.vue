@@ -24,7 +24,8 @@
       v-model:show="panelVisible"
     />
     <div class="b1">
-      <button type="button" @click="showFilter">Фильтры</button>
+      <btn class="btn" @click="showFilter">Фильтры</btn>
+
     </div>
     <div class="search">
       <div class="d1">
@@ -50,7 +51,7 @@
         </button>
         <component v-bind:is="currentTabComponent" class="tab"></component>
       </div>
-      <filter-objects @filterObject="filterObject" v-if="!filterVisible" />
+      <filter-objects @filterObject="filterObject" v-if="!filterVisible" :selected="selectedCategory"/>
       <filter-events
         @filterEvents="filterEvents"
         @allEvents="allEvents"
@@ -59,7 +60,8 @@
     </my-filter>
 
     <div class="b2">
-      <button type="button" @click="showAnalysis">Нажать</button>
+      <btn class="btn" @click="showAnalysis">Анализ</btn>
+
     </div>
 
     <analysis-panel :city="city" v-model:show="analysisPanelVisible" />
@@ -79,6 +81,7 @@ import FilterEvents from "./components/FilterEvents.vue";
 import MyFilter from "./components/UI/MyFilter.vue";
 import EventsPanel from "./components/EventsPanel.vue";
 import AnalysisPanel from "./components/AnalysisPanel.vue";
+import Btn from "./components/UI/Btn.vue";
 
 export default {
   name: "App",
@@ -92,6 +95,7 @@ export default {
     MyFilter,
     EventsPanel,
     AnalysisPanel,
+    Btn,
   },
   data() {
     return {
@@ -427,22 +431,24 @@ export default {
 }
 .b1 {
   z-index: 900;
-  position: fixed;
+  position: absolute;
   top: 0px;
-  left: 500px;
-  margin: 10px;
+  left: 18%;
+  margin: 1%;
 }
 .b2 {
   z-index: 900;
   position: fixed;
   top: 0px;
-  left: 800px;
-  margin: 10px;
+  left: 27%;
+  margin: 1%;
 }
 
 * {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
+  font-family:"Times New Roman";
+  font-size: 19px;
 }
 .object {
   position: fixed;
@@ -524,9 +530,7 @@ export default {
   left: 3%;
   margin: 1%;
 }
-.d1 {
-  background: white;
-}
+
 .d1 input {
   width: 100%;
   height: 42px;
@@ -553,5 +557,72 @@ export default {
   font-family: FontAwesome;
   font-size: 16px;
   color: white;
+}
+/* Custom dropdown */
+.custom-dropdown {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 5px; /* demo only */
+  
+}
+
+.custom-dropdown select {
+  background-color: white;
+  cursor: pointer;
+  color: black;
+  font-size: inherit;
+  padding: 0.5em;
+  padding-right: 2.5em;
+  border: 1px solid teal;
+  margin: 0;
+  border-radius: 3px;
+  text-indent: 0.01px;
+  text-overflow: "";
+  -webkit-appearance: none; /* hide default arrow in chrome OSX */
+  outline: none;
+}
+
+.custom-dropdown::before,
+.custom-dropdown::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.custom-dropdown::after {
+  /*  Custom dropdown arrow */
+  content: "\25BC";
+  height: 1em;
+  font-size: 0.625em;
+  line-height: 1;
+  right: 1.2em;
+  top: 50%;
+  margin-top: -0.5em;
+}
+
+.custom-dropdown::before {
+  /*  Custom dropdown arrow cover */
+  width: 2em;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 0 3px 3px 0;
+}
+
+.custom-dropdown select[disabled] {
+  color: teal;
+}
+
+.custom-dropdown select[disabled]::after {
+  color: teal;
+}
+
+.custom-dropdown::before {
+  background-color: teal;
+}
+
+.custom-dropdown::after {
+  color: rgba(0, 0, 0, 0.4);
 }
 </style>
