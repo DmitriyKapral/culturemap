@@ -217,8 +217,8 @@ export default {
 }
 
 .pos {
-  position: absolute;
-  left: 10%;
-  top: 3%;
+  position: relative;
+  left: 5%;
+  top: -2%;
 }
 </style>

@@ -3,12 +3,7 @@
     <div>
       <fieldset>
         <legend>Фильтры событий</legend>
-        <Multiselect
-        mode="multiple"
         
-      v-model="value"
-      :options="options"
-    />
         <select
           class="form-select"
           multiple
@@ -48,11 +43,8 @@
 </template>
 
 <script>
-import Multiselect from '@vueform/multiselect'
+
 export default {
-  components: {
-      Multiselect,
-    },
   emits: ["filterEvents", "allEvents"],
   data() {
     return {

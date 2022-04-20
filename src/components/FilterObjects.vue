@@ -92,8 +92,6 @@ export default {
     },
     closeOut(){
       this.showSelect = false;
-      // console.log(this.$refs.checkedNames)
-      // this.all = this.$root.checkedNames;
     }
   },
 };

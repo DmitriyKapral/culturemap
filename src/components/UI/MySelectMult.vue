@@ -13,7 +13,7 @@
           :id="option.value"
           
         />
-        <label  :for="option.value">{{ option.name }}</label>
+        <label :for="option.value">{{ option.name }}</label>
       </div>
     </div>
   </div>

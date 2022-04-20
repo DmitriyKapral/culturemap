@@ -26,7 +26,18 @@
     <div class="b1">
       <button type="button" @click="showFilter">Фильтры</button>
     </div>
-    
+    <div class="search">
+      <div class="d1">
+        <input
+          type="search"
+          v-on:keyup="validateSearch"
+          v-model="search"
+          placeholder="Искать здесь..."
+        />
+        <button type="button" @click="SearchToName"></button>
+      </div>
+    </div>
+
     <my-filter v-model:show="filterObjectVisible">
       <div class="pos">
         <button
@@ -39,14 +50,17 @@
         </button>
         <component v-bind:is="currentTabComponent" class="tab"></component>
       </div>
-      <filter-objects @filterObject="filterObject" v-if="!filterVisible"/>
-      <filter-events @filterEvents="filterEvents" @allEvents="allEvents" v-if="filterVisible" />
+      <filter-objects @filterObject="filterObject" v-if="!filterVisible" />
+      <filter-events
+        @filterEvents="filterEvents"
+        @allEvents="allEvents"
+        v-if="filterVisible"
+      />
     </my-filter>
 
     <div class="b2">
       <button type="button" @click="showAnalysis">Нажать</button>
     </div>
-    
 
     <analysis-panel :city="city" v-model:show="analysisPanelVisible" />
   </div>
@@ -81,6 +95,7 @@ export default {
   },
   data() {
     return {
+      search: "",
       filterVisible: false,
       currentTab: "Фильтр Объектов",
       tabs: ["Фильтр Объектов", "Фильтр Мероприятий"],
@@ -189,6 +204,32 @@ export default {
     };
   },
   methods: {
+    SearchToName() {
+      if (this.search == "") {
+        return;
+      } else {
+        for (let i = 0; i < 8; i++) {
+          const searchName = this.data[i].find((x) =>
+            x.data.general.name
+              .toLowerCase()
+              .includes(this.search.toLowerCase())
+          );
+          if (typeof searchName != "undefined") {
+            this.zoomUpdated(19);
+            setTimeout(this.centerUpdated, 200, [
+              searchName.data.general.address.mapPosition.coordinates[1],
+              searchName.data.general.address.mapPosition.coordinates[0],
+            ]);
+            break;
+          }
+        }
+      }
+    },
+    validateSearch: function (e) {
+      if (e.keyCode === 13) {
+        this.SearchToName();
+      }
+    },
     currentTabComponent() {
       if (this.currentTab == "Фильтр Объектов") {
         this.filterVisible = false;
@@ -197,7 +238,6 @@ export default {
       }
     },
     filterEvents(selectCategoryEvents, selectedFree, inputAge) {
-      this.filterObjectVisible = false;
       this.loadingEvents();
       for (let i = 0; i < 8; i++) {
         this.events[i] = this.events[i]
@@ -389,7 +429,7 @@ export default {
   z-index: 900;
   position: fixed;
   top: 0px;
-  left: 100px;
+  left: 500px;
   margin: 10px;
 }
 .b2 {
@@ -473,8 +513,45 @@ export default {
   cursor: pointer;
   background: #f0f0f0;
   position: relative;
-  margin-right: -1px;
+  margin-right: 0px;
   width: 300px;
   left: 0;
+}
+.search {
+  z-index: 900;
+  position: fixed;
+  top: 0px;
+  left: 3%;
+  margin: 1%;
+}
+.d1 {
+  background: white;
+}
+.d1 input {
+  width: 100%;
+  height: 42px;
+  padding-left: 10px;
+  border: 2px solid teal;
+  border-radius: 5px;
+  outline: none;
+  background: white;
+  color: black;
+}
+.d1 button {
+  position: absolute;
+  top: 0;
+  right: 0px;
+  width: 42px;
+  height: 42px;
+  border: none;
+  background: teal;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+}
+.d1 button:before {
+  content: "\f002";
+  font-family: FontAwesome;
+  font-size: 16px;
+  color: white;
 }
 </style>
