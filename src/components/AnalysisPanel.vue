@@ -60,6 +60,7 @@ export default {
         xaxis: {
           categories: [0, 0, 0, 0, 0, 0, 0, 0],
         },
+        //colors: "#008080"
       },
       series: [
         {

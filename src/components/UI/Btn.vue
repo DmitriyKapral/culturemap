@@ -27,5 +27,5 @@
   
 } 
 .btn:hover { background: rgb(79, 230, 230) } /* при наведении курсора мышки */
-.btn:active { background: white; } /* при нажатии */
+.btn:active { background: teal; } /* при нажатии */
 </style>

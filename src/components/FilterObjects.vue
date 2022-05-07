@@ -20,7 +20,7 @@
           @select="optionMult"
           v-model:show="showSelect"
           @all="closeSelectOut"
-          :selectedOptions="selectCategory"
+          :selectedOptions="selected"
         />
 
         <br />
@@ -55,14 +55,7 @@ export default {
       ],
       selectRadius: 100000,
       selectCategory: [
-        "libraries",
-        "culture_palaces_clubs",
-        "cinema",
-        "circuses",
-        "concert_halls",
-        "museums",
-        "parks",
-        "theaters",
+        
       ],
       optionsCategory: [
         {
@@ -114,9 +107,6 @@ export default {
     closeOut() {
       this.showSelect = false;
     },
-  },
-  mounted() {
-    this.selectCategory = this.selected;
   },
 };
 </script>

@@ -16,6 +16,7 @@
         <span class="custom-dropdown big">
           <select v-model="selectedFree">
             <option
+            class="decorated"
               v-for="FreeFalse in freeOrFalse"
               v-bind:key="FreeFalse"
               :value="FreeFalse.value"
@@ -40,6 +41,9 @@
           </button>
         </div>
         <br />
+        <strong>Выберите дату начала мероприятий:</strong><br />
+        <input class="date" :min="new Date().toISOString().split('T')[0]" type="date" v-model="mydate" />
+        <br />
         <btn style="margin: 2%" class="btn" @click="filterEvents">Применить</btn>
         <btn style="margin: 2%" class="btn" @click="allEvents">Показать список</btn>
       </fieldset>
@@ -55,6 +59,7 @@ export default {
   emits: ["filterEvents", "allEvents"],
   data() {
     return {
+      mydate: '',
       showSelect: false,
       value: null,
       options: ["Batman", "Robin", "Joker"],
@@ -110,7 +115,8 @@ export default {
         "filterEvents",
         this.selectCategoryEvents,
         this.selectedFree,
-        this.inputAge
+        this.inputAge,
+        this.mydate
       );
     },
     allEvents() {
@@ -143,6 +149,7 @@ export default {
   left: 300px;
   margin: 10px;
 }
+
 .number {
 	display: inline-block;
 	position: relative;
@@ -151,6 +158,7 @@ export default {
 }
 .number input[type="number"] {
   cursor:auto;
+  border: 1px solid teal;
 	display: block;
 	height: 32px;
 	line-height: 32px;
@@ -170,33 +178,47 @@ export default {
 .number-minus {
 	position: absolute;
 	top: 0px;
-	left: 0px;
-	bottom: 1px;
-	width: 20px;
+
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+	left: -5px;
+	bottom: 0px;
+	width: 30px;
 	padding: 0;
 	display: block;
 	text-align: center;
 	border: none;
-	border-right: 1px solid teal;
+
 	font-size: 16px;
 	font-weight: 600;
   background: teal;
   cursor: pointer;
 }
+
 .number-plus {
 	position: absolute;
-	top: 1px;
-	right: 1px;
-	bottom: 1px;
-	width: 20px;
+	top: 0px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+	right: -5px;
+	bottom: 0px;
+	width: 30px;
 	padding: 0;
 	display: block;
 	text-align: center;
 	border: none;
-	border-left: 1px solid teal;
+
 	font-size: 16px;
 	font-weight: 600;
   background: teal;
   cursor: pointer;
 }
+.date {
+  border: 1px solid teal;
+  margin: 5px;
+}
+
+.number-plus:active { background: rgb(22, 185, 185); } /* при нажатии */
+.number-minus:active { background: rgb(22, 185, 185); } /* при нажатии */
+
 </style>

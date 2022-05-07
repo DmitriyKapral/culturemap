@@ -23,21 +23,6 @@
       @moveToMarker="moveToMarker"
       v-model:show="panelVisible"
     />
-    <div class="b1">
-      <btn class="btn" @click="showFilter">Фильтры</btn>
-
-    </div>
-    <div class="search">
-      <div class="d1">
-        <input
-          type="search"
-          v-on:keyup="validateSearch"
-          v-model="search"
-          placeholder="Искать здесь..."
-        />
-        <button type="button" @click="SearchToName"></button>
-      </div>
-    </div>
 
     <my-filter v-model:show="filterObjectVisible">
       <div class="pos">
@@ -51,17 +36,35 @@
         </button>
         <component v-bind:is="currentTabComponent" class="tab"></component>
       </div>
-      <filter-objects @filterObject="filterObject" v-if="!filterVisible" :selected="selectedCategory"/>
+      <filter-objects
+        @filterObject="filterObject"
+        v-if="!filterVisible"
+        :selected="selectedCategory"
+      />
       <filter-events
         @filterEvents="filterEvents"
         @allEvents="allEvents"
         v-if="filterVisible"
       />
     </my-filter>
-
-    <div class="b2">
-      <btn class="btn" @click="showAnalysis">Анализ</btn>
-
+    <div class="fixed">
+      <div class="search">
+        <div class="d1">
+          <input
+            type="search"
+            v-on:keyup="validateSearch"
+            v-model="search"
+            placeholder="Искать здесь..."
+          />
+          <button type="button" @click="SearchToName"></button>
+        </div>
+      </div>
+      <div class="b1">
+        <btn class="btn" @click="showFilter">Фильтры</btn>
+      </div>
+      <div class="b2">
+        <btn class="btn" @click="showAnalysis">Анализ</btn>
+      </div>
     </div>
 
     <analysis-panel :city="city" v-model:show="analysisPanelVisible" />
@@ -241,7 +244,7 @@ export default {
         this.filterVisible = true;
       }
     },
-    filterEvents(selectCategoryEvents, selectedFree, inputAge) {
+    filterEvents(selectCategoryEvents, selectedFree, inputAge, mydate) {
       this.loadingEvents();
       for (let i = 0; i < 8; i++) {
         this.events[i] = this.events[i]
@@ -253,6 +256,10 @@ export default {
           this.events[i] = this.events[i].filter(
             (item) => item.data.general.isFree == Boolean(selectedFree)
           );
+        }
+        if (!mydate.trim() == '')
+        {
+          this.events[i] = this.events[i].filter(event => event.data.general.seances.some(date => date.start.includes(mydate)));
         }
       }
     },
@@ -399,7 +406,6 @@ export default {
   },
   async mounted() {
     this.getLocation();
-
     this.city = await this.postCity(this.centerLat, this.centerLon);
     //Загрузка объектов
     for (let i = 0; i < 8; i++) {
@@ -431,23 +437,41 @@ export default {
 }
 .b1 {
   z-index: 900;
-  position: absolute;
+
   top: 0px;
   left: 18%;
   margin: 1%;
 }
 .b2 {
   z-index: 900;
-  position: fixed;
+
   top: 0px;
   left: 27%;
   margin: 1%;
+}
+.search {
+  z-index: 900;
+  top: 0px;
+  left: 3%;
+  margin: 1%;
+
+}
+.fixed {
+  position: fixed;
+  display: flex;
+  width: 1600px;
+  height: 100px;
+  z-index: 900;
+  left: 4%;
+  top: 0;
+
+
 }
 
 * {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  font-family:"Times New Roman";
+  font-family: "Times New Roman";
   font-size: 19px;
 }
 .object {
@@ -523,14 +547,10 @@ export default {
   width: 300px;
   left: 0;
 }
-.search {
-  z-index: 900;
-  position: fixed;
-  top: 0px;
-  left: 3%;
-  margin: 1%;
-}
 
+.d1 {
+  display: flex;
+}
 .d1 input {
   width: 100%;
   height: 42px;
@@ -542,7 +562,7 @@ export default {
   color: black;
 }
 .d1 button {
-  position: absolute;
+  margin-left: -20px;
   top: 0;
   right: 0px;
   width: 42px;
@@ -551,6 +571,9 @@ export default {
   background: teal;
   border-radius: 0 5px 5px 0;
   cursor: pointer;
+}
+.d1 button:active {
+  background: rgb(6, 185, 185);
 }
 .d1 button:before {
   content: "\f002";
@@ -564,7 +587,6 @@ export default {
   display: inline-block;
   vertical-align: middle;
   margin: 5px; /* demo only */
-  
 }
 
 .custom-dropdown select {
@@ -625,4 +647,34 @@ export default {
 .custom-dropdown::after {
   color: rgba(0, 0, 0, 0.4);
 }
+
+.table {
+	width: 100%;
+	margin-bottom: 20px;
+	border: 5px solid #fff;
+	border-top: 5px solid #fff;
+	border-bottom: 3px solid #fff;
+	border-collapse: collapse; 
+	font-size: 15px;
+
+}
+.table th {
+	font-weight: bold;
+	padding: 7px;
+	background: white;
+	border: none;
+	text-align: left;
+	font-size: 15px;
+	border-top: 3px solid teal;
+	border-bottom: 3px solid teal;
+}
+.table td {
+	padding: 7px;
+	border: none;
+	border-top: 3px solid #fff;
+	border-bottom: 3px solid teal;
+	font-size: 15px;
+}
+
+
 </style>

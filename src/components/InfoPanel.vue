@@ -34,38 +34,42 @@
             </div>
           </div>
           <div v-if="info.contacts?.hasOwnProperty('website')">
-            Website: {{info.contacts.website}}
+            Website: {{ info.contacts.website }}
           </div>
           <strong>Дни работы:</strong>
           <div v-for="(work, index) in info.workingSchedule" v-bind:key="work">
             {{ daysOfWeek[index] }}: {{ work.from }} - {{ work.to }}
           </div>
-          
         </div>
         <div class="object__descr"></div>
       </div>
       <div v-if="!bool">
         <h1>{{ info.name }}</h1>
-        <table cellspacing="0" cellpadding="5" border="1">
-          <tr>
-            <th>Название мероприятия</th>
-            <th>Возврастное ограничение</th>
-            <th>Категория</th>
-            <th>Бесплатный вход</th>
-            <th></th>
-          </tr>
-          <tr v-for="event in info.selectEvents" v-bind:key="event._id">
-            <td>{{ event.data.general.name }}</td>
-            <td>{{ event.data.general.ageRestriction }}</td>
-            <td>{{ event.data.general.category.name }}</td>
-            <td>{{ trueFalse(event.data.general.isFree) }}</td>
-            <td>
-              <button @click="openAsideMore(event.data.general)">
-                Подробнее
-              </button>
-            </td>
-          </tr>
-        </table>
+        <div v-if="info.selectEvents.length > 0">
+          <table class="table" cellspacing="0" cellpadding="5" border="1">
+            <tr>
+              <th>Название мероприятия</th>
+              <th>Возврастное ограничение</th>
+              <th>Категория</th>
+              <th>Бесплатный вход</th>
+              <th></th>
+            </tr>
+            <tr v-for="event in info.selectEvents" v-bind:key="event._id">
+              <td>{{ event.data.general.name }}</td>
+              <td>{{ event.data.general.ageRestriction }}</td>
+              <td>{{ event.data.general.category.name }}</td>
+              <td>{{ trueFalse(event.data.general.isFree) }}</td>
+              <td>
+                <btn class="submit" style="cursor: pointer;" @click="openAsideMore(event.data.general)">
+                  Подробнее
+                </btn>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div v-else>
+          <h1>Ближайшие мероприятия отсуствуют</h1>
+        </div>
       </div>
     </aside>
     <div>
@@ -80,10 +84,25 @@
           <strong>Стоимость входа: </strong>{{ moreEvent.price }}
         </div>
         <div>Сеансы:</div>
-        <div v-for="seance in moreEvent.seances" v-bind:key="seance">
-          {{ new Date(seance.start).toLocaleString() }} -
-          {{ new Date(seance.end).toLocaleString() }}
+        <div class="eventtable">
+          <table
+            width="70%"
+            cellspacing="0"
+            cellpadding="10"
+
+          >
+          <tr>
+            <th>Начало</th>
+            <th>Конец</th>
+          </tr>
+            <tr v-for="seance in moreEvent.seances" v-bind:key="seance">
+              <td>{{ new Date(seance.start).toLocaleString() }}</td>
+
+              <td>{{ new Date(seance.end).toLocaleString() }}</td>
+            </tr>
+          </table>
         </div>
+        
       </aside>
     </div>
   </div>
@@ -149,6 +168,34 @@ export default {
 </script>
 
 <style scoped>
+.submit {
+  display: inline-block;
+  color: black;
+  font-size: 125%;
+  font-weight: 700;
+  text-decoration: none;
+  user-select: none;
+  padding: .25em .5em;
+  outline: none;
+  border: 1px solid teal;
+  border-radius: 7px;
+  background: white;
+  box-shadow: inset 0 -2px 1px rgba(0,0,0,0), inset 0 1px 2px rgba(0,0,0,0), inset 0 0 0 60px rgba(255,255,0,0);
+  transition: box-shadow .2s, border-color .2s;
+} 
+.submit:hover {
+  box-shadow: inset 0 -1px 1px rgba(0,0,0,0), inset 0 1px 2px rgba(0,0,0,0), inset 0 0 0 60px teal;
+}
+.submit:active {
+  padding: calc(.25em + 1px) .5em calc(.25em - 1px);
+  border-color: teal;
+  box-shadow: inset 0 -1px 1px rgba(0,0,0,.1), inset 0 1px 2px rgba(0,0,0,.3), inset 0 0 0 60px rgb(24, 90, 90);
+}
+.eventtable {
+  max-height: 500px; /* Максимальная высота */
+  width: 700px;
+  overflow: auto;
+}
 .img-absolute {
   position: absolute;
   top: 0;
@@ -160,6 +207,15 @@ export default {
 }
 .more {
   z-index: 1001;
+}
+::-webkit-scrollbar {
+	width: 6px;
+} 
+::-webkit-scrollbar-track {
+	box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+} 
+::-webkit-scrollbar-thumb {
+	box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
 }
 .object {
   position: fixed;

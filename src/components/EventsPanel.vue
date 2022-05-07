@@ -2,8 +2,9 @@
   <div>
     <aside class="object" v-bind:class="{ object_closed: !show }">
       <button class="object__close" @click="closeAside"></button>
+
       <h1>Мероприятия, находящиеся в городе</h1>
-      <table cellspacing="0" cellpadding="5" border="1">
+      <table class="table" cellspacing="0" cellpadding="5" border="1">
         <tr>
           <th>Название мероприятия</th>
           <th>Возврастное ограничение</th>
@@ -18,7 +19,7 @@
             <td>{{ selectEvent.data.general.category.name }}</td>
             <td>{{ trueFalse(selectEvent.data.general.isFree) }}</td>
             <td>
-              <button
+              <btn
                 @click="
                   moveToMarker(
                     selectEvent.data.general.places[0].address.mapPosition
@@ -27,7 +28,8 @@
                 "
               >
                 Показать
-              </button>
+              </btn>
+              
             </td>
           </tr>
         </template>
@@ -37,7 +39,9 @@
 </template>
 
 <script>
+import Btn from './UI/Btn.vue';
 export default {
+  components: { Btn },
   emits: ["moveToMarker"],
   props: {
     show: {
@@ -68,9 +72,20 @@ export default {
 </script>
 
 <style scoped>
-
 * {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
+}
+
+ 
+/* Стили для скролла */
+::-webkit-scrollbar {
+	width: 6px;
+} 
+::-webkit-scrollbar-track {
+	box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+} 
+::-webkit-scrollbar-thumb {
+	box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
 }
 </style>
