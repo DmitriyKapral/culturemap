@@ -4,16 +4,16 @@
       Выбрано: <strong>{{ checkedNames.length }}</strong>
     </p>
     <div @click.stop class="options" v-if="show">
-      <div v-for="option in options" :key="option.value">
+      <div v-for="option in options" :key="option">
         <input
           style="float: left"
           type="checkbox"
           class="custom-checkbox"
-          :value="option.value"
+          :value="option"
           v-model="checkedNames"
-          :id="option.value"
+          :id="option"
         />
-        <label :for="option.value">{{ option.name }}</label>
+        <label :for="option">{{ option }}</label>
       </div>
     </div>
   </div>
@@ -75,7 +75,8 @@ export default {
   width: 200px;
 }
 .options {
-  border: solid 1px gray;
+  border: solid 1px teal;
+  border-radius: 0px 0px 6px 6px;
   position: absolute;
   background: white;
   top: 42px;
@@ -153,11 +154,13 @@ export default {
   position: absolute;
   z-index: -1;
   opacity: 0;
+  cursor: pointer;
 }
 .custom-checkbox+label {
   display: inline-flex;
   align-items: center;
   user-select: none;
+  cursor: pointer;
 }
 .custom-checkbox+label::before {
   content: '';
@@ -180,7 +183,7 @@ export default {
 }
 /* стили при наведении курсора на checkbox */
 .custom-checkbox:not(:disabled):not(:checked)+label:hover::before {
-  border-color: #b3d7ff;
+  border-color: teal;
 }
 /* стили для активного состояния чекбокса (при нажатии на него) */
 .custom-checkbox:not(:disabled):active+label::before {
@@ -193,7 +196,7 @@ export default {
 }
 /* стили для чекбокса, находящегося в фокусе и не находящегося в состоянии checked */
 .custom-checkbox:focus:not(:checked)+label::before {
-  border-color: #80bdff;
+  border-color: teal;
 }
 /* стили для чекбокса, находящегося в состоянии disabled */
 .custom-checkbox:disabled+label::before {

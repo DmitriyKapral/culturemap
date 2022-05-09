@@ -13,6 +13,7 @@
         <component v-bind:is="currentTabComponent" class="tab"></component>
       </div>
 
+
       <button class="object__close" @click="closeAside"></button>
 
       <div v-if="bool">
@@ -22,9 +23,9 @@
           <img :src="info.img" alt="" class="img-absolute" />
         </div>
         <div>
-          <p>Контакты для связи:</p>
+          <strong>Контакты для связи:</strong>
           <div v-if="info.contacts?.hasOwnProperty('email')">
-            <p>Email: {{ info.contacts.email }}</p>
+            Email: {{ info.contacts.email }}
           </div>
 
           <div v-if="info.contacts?.hasOwnProperty('phones')">
@@ -60,7 +61,11 @@
               <td>{{ event.data.general.category.name }}</td>
               <td>{{ trueFalse(event.data.general.isFree) }}</td>
               <td>
-                <btn class="submit" style="cursor: pointer;" @click="openAsideMore(event.data.general)">
+                <btn
+                  class="submit"
+                  style="cursor: pointer"
+                  @click="openAsideMore(event.data.general)"
+                >
                   Подробнее
                 </btn>
               </td>
@@ -85,16 +90,11 @@
         </div>
         <div>Сеансы:</div>
         <div class="eventtable">
-          <table
-            width="70%"
-            cellspacing="0"
-            cellpadding="10"
-
-          >
-          <tr>
-            <th>Начало</th>
-            <th>Конец</th>
-          </tr>
+          <table width="70%" cellspacing="0" cellpadding="10">
+            <tr>
+              <th>Начало</th>
+              <th>Конец</th>
+            </tr>
             <tr v-for="seance in moreEvent.seances" v-bind:key="seance">
               <td>{{ new Date(seance.start).toLocaleString() }}</td>
 
@@ -102,7 +102,6 @@
             </tr>
           </table>
         </div>
-        
       </aside>
     </div>
   </div>
@@ -175,21 +174,24 @@ export default {
   font-weight: 700;
   text-decoration: none;
   user-select: none;
-  padding: .25em .5em;
+  padding: 0.25em 0.5em;
   outline: none;
   border: 1px solid teal;
   border-radius: 7px;
   background: white;
-  box-shadow: inset 0 -2px 1px rgba(0,0,0,0), inset 0 1px 2px rgba(0,0,0,0), inset 0 0 0 60px rgba(255,255,0,0);
-  transition: box-shadow .2s, border-color .2s;
-} 
+  box-shadow: inset 0 -2px 1px rgba(0, 0, 0, 0),
+    inset 0 1px 2px rgba(0, 0, 0, 0), inset 0 0 0 60px rgba(255, 255, 0, 0);
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
 .submit:hover {
-  box-shadow: inset 0 -1px 1px rgba(0,0,0,0), inset 0 1px 2px rgba(0,0,0,0), inset 0 0 0 60px teal;
+  box-shadow: inset 0 -1px 1px rgba(0, 0, 0, 0),
+    inset 0 1px 2px rgba(0, 0, 0, 0), inset 0 0 0 60px teal;
 }
 .submit:active {
-  padding: calc(.25em + 1px) .5em calc(.25em - 1px);
+  padding: calc(0.25em + 1px) 0.5em calc(0.25em - 1px);
   border-color: teal;
-  box-shadow: inset 0 -1px 1px rgba(0,0,0,.1), inset 0 1px 2px rgba(0,0,0,.3), inset 0 0 0 60px rgb(24, 90, 90);
+  box-shadow: inset 0 -1px 1px rgba(0, 0, 0, 0.1),
+    inset 0 1px 2px rgba(0, 0, 0, 0.3), inset 0 0 0 60px rgb(24, 90, 90);
 }
 .eventtable {
   max-height: 500px; /* Максимальная высота */
@@ -209,13 +211,13 @@ export default {
   z-index: 1001;
 }
 ::-webkit-scrollbar {
-	width: 6px;
-} 
+  width: 6px;
+}
 ::-webkit-scrollbar-track {
-	box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
-} 
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
 ::-webkit-scrollbar-thumb {
-	box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
 .object {
   position: fixed;
@@ -277,4 +279,5 @@ export default {
   left: 5%;
   top: -2%;
 }
+
 </style>

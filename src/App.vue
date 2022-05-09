@@ -9,7 +9,7 @@
       <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
       <div v-for="n in 8" :key="n">
         <get-markers
-          v-if="selectedCategory.includes(nameCategoryObject[n - 1])"
+          v-if="selectedCategory.includes(categoryObject[n - 1])"
           :data="data[n - 1]"
           :icon="icons[n - 1]"
           :events="events[n - 1]"
@@ -113,14 +113,14 @@ export default {
       selectedFree: 0,
       inputAge: 0,
       selectedCategory: [
-        "libraries",
-        "culture_palaces_clubs",
-        "cinema",
-        "circuses",
-        "concert_halls",
-        "museums",
-        "parks",
-        "theaters",
+        "Библиотеки",
+        "Кинотеатры",
+        "Цирки",
+        "Концертные залы",
+        "Музеи и галереи",
+        "Парки",
+        "Театры",
+        "ДК и клубы",
       ],
       city: "",
       data: [[], [], [], [], [], [], [], []],
@@ -206,7 +206,7 @@ export default {
         "Музеи и галереи",
         "Парки",
         "Театры",
-        "Дворцы культуры и клубы",
+        "ДК и клубы",
       ],
     };
   },
@@ -300,6 +300,7 @@ export default {
 
     async filterObject(selectCategory, selectRadius) {
       this.filterObjectVisible = false;
+      
       this.selectedCategory = selectCategory;
       this.selectRadius = selectRadius;
       for (let i = 0; i < 8; i++) {

@@ -1,16 +1,20 @@
 <template>
-  <div class="mySelect custom-dropdown">
-    <p @click="areOptionsVisible = !areOptionsVisible" class="title">
+  <div class="custom-select" :tabindex="tabindex" @blur="open = false">
+    <div class="selected" :class="{ open: open }" @click="open = !open">
       {{ selected }}
-    </p>
-    <div class="options" v-if="areOptionsVisible">
-      <p
-        v-for="option in options"
-        :key="option.value"
-        @click="selectOption(option)"
+    </div>
+    <div class="items" :class="{ selectHide: !open }">
+      <div
+        v-for="(option, i) of options"
+        :key="i"
+        @click="
+          selected = option.name;
+          open = false;
+          $emit('input', option.value);
+        "
       >
         {{ option.name }}
-      </p>
+      </div>
     </div>
   </div>
 </template>
@@ -18,97 +22,58 @@
 <script>
 export default {
   props: {
-    selected: {
-      type: String,
-    },
     options: {
       type: Array,
-      default() {
-        return [];
-      },
+      required: true,
+    },
+    default: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    tabindex: {
+      type: Number,
+      required: false,
+      default: 0,
     },
   },
   data() {
     return {
-      areOptionsVisible: false,
+      selected: this.default
+        ? this.default
+        : this.options.length > 0
+        ? this.options[0]
+        : null,
+      open: false,
     };
   },
-  methods: {
-    selectOption(option) {
-      this.$emit("select", option);
-      this.areOptionsVisible = false;
-    },
-    hideSelect() {
-        this.areOptionsVisible = false;
-    }
-  },
-  mounted() {
-      document.addEventListener('click', this.hideSelect, true)
-  },
-  beforeUnmount() {
-      document.removeEventListener('click', this.hideSelect, true)
-  },
+
 };
 </script>
 
 <style scoped>
-.mySelect {
-  cursor: pointer;
+/* Custom dropdown */
+
+.custom-select {
   position: relative;
   width: 200px;
-}
-p {
-  margin: 0;
-}
-.options {
-  border: solid 1px gray;
-  position: absolute;
-  background: white;
-  top: 30px;
-  right: 0;
-  width: 100%;
-
-}
-.title {
-  border: solid 1px;
-}
-.options p:hover {
-  background: gray;
+  text-align: left;
+  outline: none;
+  height: 47px;
+  left: 31%;
+  line-height: 47px;
+  
+  
 }
 
-
-/* Custom dropdown */
-.custom-dropdown {
-  position: relative;
-  display: inline-block;
-  vertical-align: middle;
-  margin: 5px; /* demo only */
-}
-
-.custom-dropdown select {
-
-  background-color: white;
-  color: black;
-  font-size: inherit;
-  padding: 0.5em;
-  padding-right: 2.5em;
-  border: 1px solid teal;
-  margin: 0;
-  border-radius: 3px;
-  text-indent: 0.01px;
-  text-overflow: "";
-  -webkit-appearance: none; /* hide default arrow in chrome OSX */
-  outline:none;
-}
-
-.custom-dropdown::before,
-.custom-dropdown::after {
+.custom-select::before,
+.custom-select::after {
   content: "";
   position: absolute;
   pointer-events: none;
 }
 
-.custom-dropdown::after {
+.custom-select::after {
   /*  Custom dropdown arrow */
   content: "\25BC";
   height: 1em;
@@ -117,39 +82,87 @@ p {
   right: 1.2em;
   top: 50%;
   margin-top: -0.5em;
+  
 }
 
-.custom-dropdown::before {
+.custom-select::before {
   /*  Custom dropdown arrow cover */
   width: 2em;
   right: 0;
   top: 0;
+  height: 104%;
   bottom: 0;
-  border-radius: 0 3px 3px 0;
+  border-radius: 0 6px 6px 0;
+  
 }
 
-.custom-dropdown select[disabled] {
-  color: teal;
+.custom-select::before {
+  background-color: teal;
+  
 }
 
-.custom-dropdown select[disabled]::after {
-  color: teal;
+
+.custom-select::after {
+  color: rgba(0, 0, 0, 0.4);
+  
 }
 
-.custom-dropdown::before {
+
+
+.custom-select .selected {
+  background-color: white;
+  border-radius: 6px;
+  border: 1px solid teal;
+  color: black;
+  padding-left: 1em;
+  cursor: pointer;
+  user-select: none;
+  
+}
+
+.custom-select .selected.open {
+  border: 1px solid teal;
+  border-radius: 6px 6px 0px 0px;
+}
+
+.custom-select .selected:after {
+  position: absolute;
+  content: "";
+  top: 22px;
+  right: 1em;
+  width: 0;
+  height: 0;
+  border: 5px solid transparent;
+
+  
+}
+
+.custom-select .items {
+  color: black;
+  border-radius: 0px 0px 6px 6px;
+  overflow: hidden;
+  border-right: 1px solid teal;
+  border-left: 1px solid teal;
+  border-bottom: 1px solid teal;
+  position: absolute;
+  background-color: white;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.custom-select .items div {
+  color: black;
+  padding-left: 1em;
+  cursor: pointer;
+  user-select: none;
+}
+
+.custom-select .items div:hover {
   background-color: teal;
 }
 
-.custom-dropdown::after {
-  color: rgba(0, 0, 0, 0.4);
+.selectHide {
+  display: none;
 }
-
-
-
-
-
-
-
-
-
 </style>

@@ -4,15 +4,14 @@
       <fieldset @click="closeOut">
         <legend>Фильтры объектов</legend>
         <h2>Выберите радиус поиска объектов от своей позиции:</h2>
-        <span class="custom-dropdown big">
-          <select v-model="selectRadius">
-            <option value="500">500 метров</option>
-            <option value="1000">1000 метров</option>
-            <option value="1500">1500 метров</option>
-            <option value="3000">3000 метров</option>
-            <option value="100000">Весь город</option>
-          </select>
-        </span>
+
+        <my-select
+          :options="optionsRadius"
+          :default="'Весь город'"
+          class="select"
+          @input="input"
+        />
+
         <div class="v-options"></div>
         <h2>Выберите категории поиска объектов:</h2>
         <my-select-mult
@@ -20,7 +19,7 @@
           @select="optionMult"
           v-model:show="showSelect"
           @all="closeSelectOut"
-          :selectedOptions="selected"
+          :selectedOptions="optionsCategory"
         />
 
         <br />
@@ -34,66 +33,41 @@
 
 <script>
 import Btn from "./UI/Btn.vue";
-//import MySelect from './UI/MySelect.vue';
+import MySelect from "./UI/MySelect.vue";
 import MySelectMult from "./UI/MySelectMult.vue";
 
 export default {
-  components: { Btn, /*MySelect*/ MySelectMult },
+  components: { Btn, MySelectMult, MySelect },
   emits: ["filterObject"],
-  props: {
-    selected: {
-      type: Array,
-    }
-  },
   data() {
     return {
       showSelect: false,
       all: [],
-      options: [
-        { name: "Option 1", value: 1 },
-        { name: "Option 2", value: 2 },
+      optionsRadius: [
+        { name: "500 метров", value: 500 },
+        { name: "1000 метров", value: 1000 },
+        { name: "1500 метров", value: 1500 },
+        { name: "3000 метров", value: 3000 },
+        { name: "Весь город", value: 100000 },
       ],
       selectRadius: 100000,
-      selectCategory: [
-        
-      ],
+      selectCategory: [],
       optionsCategory: [
-        {
-          name: "Библиотеки",
-          value: "libraries",
-        },
-        {
-          name: "ДК и клубы",
-          value: "culture_palaces_clubs",
-        },
-        {
-          name: "Кинотеатры",
-          value: "cinema",
-        },
-        {
-          name: "Цирки",
-          value: "circuses",
-        },
-        {
-          name: "Концертные залы",
-          value: "concert_halls",
-        },
-        {
-          name: "Музеи",
-          value: "museums",
-        },
-        {
-          name: "Парки",
-          value: "parks",
-        },
-        {
-          name: "Театры",
-          value: "theaters",
-        },
+        "Библиотеки",
+        "Кинотеатры",
+        "Цирки",
+        "Концертные залы",
+        "Музеи и галереи",
+        "Парки",
+        "Театры",
+        "ДК и клубы",
       ],
     };
   },
   methods: {
+    input(rad) {
+      this.selectRadius = rad;
+    },
     closeSelectOut(arr) {
       this.selectCategory = arr;
     },
@@ -133,6 +107,4 @@ body {
   text-align: center;
   font-family: Arial, Helvetica;
 }
-
-
 </style>

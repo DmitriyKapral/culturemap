@@ -13,18 +13,14 @@
         />
         <br>
         <strong>Поиск по платным мероприятиям:</strong> <br>
-        <span class="custom-dropdown big">
-          <select v-model="selectedFree">
-            <option
-            class="decorated"
-              v-for="FreeFalse in freeOrFalse"
-              v-bind:key="FreeFalse"
-              :value="FreeFalse.value"
-            >
-              {{ FreeFalse.text }}
-            </option>
-          </select>
-        </span>
+        <my-select
+        style="top: 10px; width: 20%; left: 40%"
+          :options="freeOrFalse"
+          :default="'Все'"
+          class="select"
+          @input="input"
+        />
+        
         <br />
         <strong>Выберите ограничение по возврасту: </strong> <br>
         <div class="number">
@@ -53,9 +49,10 @@
 
 <script>
 import MySelectMult from "./UI/MySelectMult.vue";
+import MySelect from "./UI/MySelect.vue";
 import Btn from "./UI/Btn.vue";
 export default {
-  components: { MySelectMult, Btn },
+  components: { MySelectMult, Btn, MySelect },
   emits: ["filterEvents", "allEvents"],
   data() {
     return {
@@ -64,15 +61,15 @@ export default {
       value: null,
       options: ["Batman", "Robin", "Joker"],
       categoryEvents: [
-        { name: "Встречи", value: "Встречи" },
-        { name: "Прочие", value: "Прочие" },
-        { name: "Выставки", value: "Выставки" },
-        { name: "Концерты", value: "Концерты" },
-        { name: "Праздники", value: "Праздники" },
-        { name: "Обучение", value: "Обучение" },
-        { name: "Спектакли", value: "Спектакли" },
-        { name: "Кино", value: "Кино" },
-        { name: "Экскурсии", value: "Экскурсии" },
+        "Встречи",
+        "Прочие",
+        "Выставки",
+        "Концерты",
+        "Праздники",
+        "Обучение",
+        "Спектакли",
+        "Кино",
+        "Экскурсии",
       ],
       selectCategoryEvents: [
         "Встречи",
@@ -87,14 +84,18 @@ export default {
       ],
       selectedFree: 2,
       freeOrFalse: [
-        { text: "Да", value: 1 },
-        { text: "Нет", value: 0 },
-        { text: "Все", value: 2 },
+        { name: "Да", value: 1 },
+        { name: "Нет", value: 0 },
+        { name: "Все", value: 2 },
       ],
       inputAge: 0,
     };
   },
   methods: {
+    input(selectFree){
+      this.selectedFree = selectFree;
+
+    },
     minusInput() {
       if(this.inputAge <= 18 && this.inputAge > 0)
       {
