@@ -1,5 +1,5 @@
 <template>
-  <div id="map">
+  <div id="map" >
     <l-map
       :zoom="zoom"
       :center="center"
@@ -16,7 +16,17 @@
           @getInfo="getData"
         />
       </div>
+      <div>
+        <l-marker
+        v-model:lat-lng="markerLatLng"
+        :draggable="true"
+        >
+          <l-popup>Вы находитесь здесь!</l-popup>
+        </l-marker>
+      </div>
+      
     </l-map>
+    
     <info-panel :info="info" @closeAside="closeAside" />
     <events-panel
       :events="events"
@@ -76,7 +86,7 @@
 import axios from "axios";
 import { icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
+import { LMap, LTileLayer, LMarker, LPopup } from "@vue-leaflet/vue-leaflet";
 import GetMarkers from "./components/GetMarkers.vue";
 import InfoPanel from "./components/InfoPanel.vue";
 import FilterObjects from "./components/FilterObjects.vue";
@@ -89,6 +99,7 @@ import Btn from "./components/UI/Btn.vue";
 export default {
   name: "App",
   components: {
+    checkMovingMarker: true,
     LMap,
     LTileLayer,
     GetMarkers,
@@ -99,6 +110,8 @@ export default {
     EventsPanel,
     AnalysisPanel,
     Btn,
+    LMarker,
+    LPopup
   },
   data() {
     return {
@@ -211,6 +224,12 @@ export default {
     };
   },
   methods: {
+    someMethod(event) {
+        // clientX/Y gives the coordinates relative to the viewport in CSS pixels.
+        const a = event.latlng?.lat;
+        console.log(a)
+
+    },
     SearchToName() {
       if (this.search == "") {
         return;
@@ -287,8 +306,8 @@ export default {
             this.city +
             "/",
           {
-            lat: this.centerLat,
-            long: this.centerLon,
+            lat: this.markerLatLng.lat,
+            long: this.markerLatLng.lng,
             radius: this.selectRadius,
           }
         );
@@ -300,7 +319,6 @@ export default {
 
     async filterObject(selectCategory, selectRadius) {
       this.filterObjectVisible = false;
-      
       this.selectedCategory = selectCategory;
       this.selectRadius = selectRadius;
       for (let i = 0; i < 8; i++) {
@@ -354,7 +372,7 @@ export default {
           this.centerLat = position.coords.latitude;
           this.centerLon = position.coords.longitude;
 
-          this.center = [this.centerLat, this.centerLon];
+          this.markerLatLng = {lat: this.centerLat, lng: this.centerLon};
           setTimeout(this.centerUpdated, 1000, [
             this.centerLat,
             this.centerLon,
@@ -408,6 +426,7 @@ export default {
   async mounted() {
     this.getLocation();
     this.city = await this.postCity(this.centerLat, this.centerLon);
+    //this.markerLatLng = this.center;
     //Загрузка объектов
     for (let i = 0; i < 8; i++) {
       this.data[i] = await this.fetchData(this.nameCategoryObject[i]);

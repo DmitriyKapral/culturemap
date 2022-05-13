@@ -7,17 +7,20 @@
       ]"
       :icon="icon"
       @click="getInfo(item)"
-    ></l-marker>
+    >
+    <l-tooltip>{{ item.data.general.name }}</l-tooltip>
+    </l-marker>
   </div>
 </template>
 
 <script>
-import { LMarker } from "@vue-leaflet/vue-leaflet";
+import { LMarker, LTooltip } from "@vue-leaflet/vue-leaflet";
 
 export default {
   emits: ["getInfo"],
   components: {
     LMarker,
+    LTooltip,
   },
 
   props: {

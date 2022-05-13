@@ -38,6 +38,7 @@
         </div>
         <br />
         <strong>Выберите дату начала мероприятий:</strong><br />
+        
         <input class="date" :min="new Date().toISOString().split('T')[0]" type="date" v-model="mydate" />
         <br />
         <btn style="margin: 2%" class="btn" @click="filterEvents">Применить</btn>
@@ -48,14 +49,18 @@
 </template>
 
 <script>
+//import Datepicker from 'vue3-datepicker'
 import MySelectMult from "./UI/MySelectMult.vue";
 import MySelect from "./UI/MySelect.vue";
 import Btn from "./UI/Btn.vue";
+
+
 export default {
   components: { MySelectMult, Btn, MySelect },
   emits: ["filterEvents", "allEvents"],
   data() {
     return {
+      picked: '',
       mydate: '',
       showSelect: false,
       value: null,
