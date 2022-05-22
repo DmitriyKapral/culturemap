@@ -89,8 +89,8 @@ export default {
       ],
       selectedFree: 2,
       freeOrFalse: [
-        { name: "Да", value: 1 },
-        { name: "Нет", value: 0 },
+        { name: "Да", value: 0 },
+        { name: "Нет", value: 1 },
         { name: "Все", value: 2 },
       ],
       inputAge: 0,
