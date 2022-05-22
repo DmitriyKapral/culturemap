@@ -2,15 +2,18 @@
   <div>
     <aside class="object" v-bind:class="{ object_closed: !show }">
       <button class="object__close" @click="closeAside"></button>
-      <span class="custom-dropdown big">
-        <select v-model="selectedCategory">
-          <option disabled value="">Выберите один из вариантов</option>
-          <option v-for="category in categoryEvents" :key="category">
-            {{ category }}
-          </option>
-        </select>
-      </span>
-      <btn class="btn" @click="getChart">Клик</btn>
+      <h1>Анализ прошедших мероприятий по категориям:</h1>
+      <my-select
+        style="width: 300px; left: -5px; margin: 5px;"
+        :options="categoryEvents"
+        :default="'Выберите один из вариантов'"
+        class="select"
+        @input="input"
+      />
+      
+      <btn class="btn" @click="getChart">Построить график</btn>
+      <h1>Показать количество объектов культуры в текущем городе:</h1>
+      <btn class="btn" @click="getCountObjects">Построить график</btn>
       <apexchart
         width="650"
         type="bar"
@@ -25,11 +28,13 @@
 import VueApexCharts from "vue3-apexcharts";
 import axios from "axios";
 import Btn from './UI/Btn.vue';
+import MySelect from "./UI/MySelect.vue";
 export default {
   components: {
     apexchart: VueApexCharts,
     Btn,
-  },
+    MySelect
+},
   props: {
     show: {
       type: Boolean,
@@ -42,16 +47,17 @@ export default {
   data() {
     return {
       selectedCategory: "",
+      
       categoryEvents: [
-        "Встречи",
-        "Прочие",
-        "Выставки",
-        "Концерты",
-        "Праздники",
-        "Обучение",
-        "Спектакли",
-        "Кино",
-        "Экскурсии",
+        { name: "Встречи", value: "Встречи" },
+        { name: "Прочие", value: "Прочие" },
+        { name: "Выставки", value: "Выставки" },
+        { name: "Концерты", value: "Концерты" },
+        { name: "Праздники", value: "Праздники" },
+        { name: "Обучение", value: "Обучение" },
+        { name: "Спектакли", value: "Спектакли" },
+        { name: "Кино", value: "Кино" },
+        { name: "Экскурсии", value: "Экскурсии" },
       ],
       data: [],
       count: [],
@@ -71,6 +77,9 @@ export default {
     };
   },
   methods: {
+    input(select){
+      this.selectedCategory = select;
+    },
     closeAside() {
       this.$emit("update:show", false);
     },
@@ -106,6 +115,29 @@ export default {
         alert("Ошибка");
       }
     },
+
+    async getCountObjects(){
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/getcountobjects/" +
+            this.city +
+            "/"
+        );
+        this.chartOptions = {
+          xaxis: {
+            categories: response.data.name,
+          },
+        };
+
+        this.series = [
+          {
+            data: response.data.count,
+          },
+        ];
+        } catch (a) {
+        alert("Ошибка");
+      }
+    }
   },
 };
 </script>
