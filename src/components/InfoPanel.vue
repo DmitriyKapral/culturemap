@@ -23,6 +23,10 @@
           <img :src="info.img" alt="" class="img-absolute" />
         </div>
         <div>
+          <strong>Адрес</strong>
+          <div>
+            {{ info.address }}
+          </div>
           <strong>Контакты для связи:</strong>
           <div v-if="info.contacts?.hasOwnProperty('email')">
             Email: {{ info.contacts.email }}

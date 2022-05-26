@@ -41,6 +41,7 @@ export default {
       info: {
         name: "",
         description: "",
+        address: "",
         img: "",
         contacts: [],
         workingSchedule: [],
@@ -53,6 +54,7 @@ export default {
       this.flag = true;
       this.info.name = item.data.general.name;
       this.info.description = item.data.general.description;
+      this.info.address = item.data.general.address.fullAddress;
       this.info.img = item.data.general.image.url;
       this.info.contacts = item.data.general.contacts;
       this.info.workingSchedule = item.data.general.workingSchedule;

@@ -152,6 +152,7 @@ export default {
         flag: false,
         name: "",
         description: "",
+        address: "",
         img: "",
         contacts: [],
         workingSchedule: [],
@@ -345,6 +346,7 @@ export default {
         this.info.flag = flag;
         this.info.name = data.name;
         this.info.description = data.description;
+        this.info.address = data.address;
         this.info.img = data.img;
         this.info.contacts = data.contacts;
         this.info.workingSchedule = data.workingSchedule;
